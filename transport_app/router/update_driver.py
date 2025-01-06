@@ -41,5 +41,6 @@ async def update_truck(
         "plate_number": plate_number
     }
     db_driver = crud_driver.update_driver(db, driver_id, driver_details)
+
     return RedirectResponse(url="/trucks", status_code=303)
 
