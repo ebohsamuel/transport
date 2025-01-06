@@ -1,0 +1,308 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        span{
+            width: 300px;
+        }
+    </style>
+    <title>Document</title>
+</head>
+<body>
+    <div class="container-lg text-center d-flex align-items-center justify-content-center">
+        <div class="row g-3 border border-success shadow rounded my-4" style="width: 60dvh;">
+            <div class="col-12 mt-5 mb-3">
+                <span class="fw-bold fs-2 text-success"><i class="bi bi-bus-front-fill"></i> Main Menu</span>
+            </div>
+            <!-- section for driver registration -->
+            <div class="col-12">
+                <span class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#driverkregistration">
+                    Driver Registration
+                </span>
+                <!-- driver registration modal -->
+                <div class="modal fade" id="driverkregistration" tabindex="-1" data-bs-backdrop="true" data-bs-keyboard="false" aria-labelledby="driverregistrationlabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-fullscreen-md-down modal-lg">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h1 class="modal-title fs-5" id="driverregistrationlabel">Driver Registration</h1>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container-fluid">
+                                <form action="/driver-registration" method="post" class="row text-start g-3">
+                                    <div class="col-12">
+                                        <label for="firstname" class="form-label fw-medium">First Name <span class="text-danger">*</span></label>
+                                        <input type="text" name="first_name" class="form-control" style="text-transform: uppercase;" id="firstname" placeholder="Samuel" required>
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="lastname" class="form-label fw-medium">Last Name <span class="text-danger">*</span></label>
+                                        <input type="text" name="last_name" class="form-control" style="text-transform: uppercase;" id="lastname" placeholder="Eboh" required>
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="phone_number" class="form-label fw-medium">Phone Number <span class="text-danger">*</span></label>
+                                        <input type="text" name="phone_number" class="form-control" style="text-transform: uppercase;" id="phone_number" placeholder="08034587596" required>
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="platenumber" class="form-label fw-medium">Plate Number <span class="text-danger">*</span></label>
+                                        <input type="text" name="plate_number" class="form-control" style="text-transform: uppercase;" id="platenumber" placeholder="tak448xa" required>
+                                    </div>
+                                    <div class="col-12">
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <!-- section for new trip -->
+            <div class="col-12">
+                <span class="btn btn-outline-success" data-bs-toggle="offcanvas" data-bs-target="#newTrip" aria-controls="newTrip">
+                    Enter New Trip
+                </span>
+                <!-- offcanvas for new trip -->
+                <div class="offcanvas offcanvas-start text-bg-dark" data-bs-scroll="true" data-bs-backdrop="true" tabindex="-1" id="newTrip" aria-labelledby="newTripLabel">
+                    <div class="offcanvas-header">
+                      <h5 class="offcanvas-title" id="newTripLabel">Enter New Trip</h5>
+                      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <div class="container-fluid">
+                            <div class="row g-3">
+                                {% for driver in drivers %}
+                                <div class="col-12 text-start">
+                                    <a class="link-light link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="/trip-registration-form/{{ driver.id }}">{{ driver.plate_number }}</a>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- section for new expenses -->
+            <div class="col-12" data-bs-toggle="offcanvas" data-bs-target="#newExpense" aria-controls="newExpense">
+                <span class="btn btn-outline-success">
+                    Enter New Expenses
+                </span>
+                <!-- offcanvas for new expense -->
+                <div class="offcanvas offcanvas-start text-bg-dark" data-bs-scroll="true" data-bs-backdrop="true" tabindex="-1" id="newExpense" aria-labelledby="newExpenseLabel">
+                    <div class="offcanvas-header">
+                      <h5 class="offcanvas-title" id="newExpenseLabel">Enter New Expense</h5>
+                      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <div class="container-fluid">
+                            <div class="row g-3">
+                                {% for driver in drivers %}
+                                <div class="col-12 text-start">
+                                    <a class="link-light link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="/expense-registration-form/{{ driver.id }}">{{ driver.plate_number }}</a>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- section for driver trip report -->
+            <div class="col-12">
+                <span class="btn btn-outline-success" data-bs-toggle="offcanvas" data-bs-target="#tripReport" aria-controls="tripReport">
+                    Driver Trip Report
+                </span>
+                <!-- offcanvas for trip report -->
+                <div class="offcanvas offcanvas-start text-bg-dark" data-bs-scroll="true" data-bs-backdrop="true" tabindex="-1" id="tripReport" aria-labelledby="tripReportLabel">
+                    <div class="offcanvas-header">
+                      <h5 class="offcanvas-title" id="tripReportLabel">Trip Report</h5>
+                      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <div class="container-fluid">
+                            <div class="row g-3">
+                                {% for driver in drivers %}
+                                <div class="col-12 text-start">
+                                    <a class="link-light link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="#">{{ driver.plate_number }}</a>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- section for driver expenses report -->
+            <div class="col-12">
+                <span class="btn btn-outline-success" data-bs-toggle="offcanvas" data-bs-target="#expenseReport" aria-controls="expenseReport">
+                    Driver Expenses Report
+                </span>
+                <!-- offcanvas for expense report -->
+                <div class="offcanvas offcanvas-start text-bg-dark" data-bs-scroll="true" data-bs-backdrop="true" tabindex="-1" id="expenseReport" aria-labelledby="expenseReportLabel">
+                    <div class="offcanvas-header">
+                      <h5 class="offcanvas-title" id="expenseReportLabel">Expense Report</h5>
+                      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <div class="container-fluid">
+                            <div class="row g-3">
+                                {% for driver in drivers %}
+                                <div class="col-12 text-start">
+                                    <a class="link-light link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="#">{{ driver.plate_number }}</a>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- section for general trip report -->
+            <div class="col-12">
+                <span class="btn btn-outline-success" id="generalReport">
+                    General Trip Report
+                </span>
+            </div>
+            <!-- section for general expenses report -->
+            <div class="col-12">
+                <span class="btn btn-outline-success" id="generalExpense">
+                    General Expenses Report
+                </span>
+            </div>
+            <!-- section for staff registration -->
+            <div class="col-12">
+                <span class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#staffregistration">
+                    Staff Registration
+                </span>
+                <!-- modal for staff registration -->
+                <div class="modal fade" id="staffregistration" tabindex="-1" data-bs-backdrop="true" data-bs-keyboard="false" aria-labelledby="staffregistrationlabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-fullscreen-md-down modal-lg">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h1 class="modal-title fs-5" id="staffregistrationlabel">Staff Registration</h1>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container-fluid">
+                                <form class="row text-start g-3">
+                                    <div class="col-12">
+                                        <label for="staffEmail" class="form-label fw-medium">Email <span class="text-danger">*</span></label>
+                                        <input type="email" class="form-control" id="staffEmail" placeholder="example@gmail.com">
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="staffPassword" class="form-label fw-medium">Password <span class="text-danger">*</span></label>
+                                        <input type="password" class="form-control" id="staffPassword">
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="userCategory" class="form-label fw-medium">User Category <span class="text-danger">*</span></label>
+                                        <select id="userCategory" class="form-select">
+                                            <option selected>Choose...</option>
+                                            <option value="manager">Manager</option>
+                                            <option value="accountant">Accountant</option>
+                                            <option value="staff">Staff</option>
+                                        </select>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          <button type="button" class="btn btn-primary" id="staffRegistrationButton">Submit</button>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <!-- section for more -->
+            <div class="col-12 mb-5">
+                <span class="btn btn-outline-success" data-bs-toggle="offcanvas" data-bs-target="#more" aria-controls="more">
+                    More..
+                </span>
+                <!-- offcanvas for more -->
+                <div class="offcanvas offcanvas-start text-bg-dark" data-bs-scroll="true" data-bs-backdrop="true" tabindex="-1" id="more" aria-labelledby="moreLabel">
+                    <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="moreLabel">More Info</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <div class="container-fluid">
+                            <div class="row g-3">
+                                <div class="col-12  text-start">
+                                    <a class="link-light link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="/staff-list">Update Staff Info</a>
+                                </div>
+                                <div class="col-12 text-start">
+                                    <a class="link-light link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="/trips">Update Trip</a>
+                                </div>
+                                <div class="col-12 text-start">
+                                    <a class="link-light link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="/expenses">Update Expense</a>
+                                </div>
+                                <div class="col-12 text-start">
+                                    <a class="link-light link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="/trucks">Update Driver</a>
+                                </div>
+                                <div class="col-12 text-start">
+                                    <a class="link-light link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="/logout">Logout</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+        const generalReport = document.getElementById('generalReport');
+        const generalExpense = document.getElementById('generalExpense');
+
+        generalReport.addEventListener('click', function () {
+            window.location.href = '#';
+        });
+
+        generalExpense.addEventListener('click', function () {
+            window.location.href = '#';
+        });
+
+        const staffEmailInput = document.getElementById('staffEmail');
+        const staffPasswordInput = document.getElementById('staffPassword');
+        const userCategorySelect = document.getElementById('userCategory');
+        const staffRegistrationButton = document.getElementById('staffRegistrationButton');
+
+        staffRegistrationButton.addEventListener('click', function (event) {
+
+            const email = staffEmailInput.value;
+            const password = staffPasswordInput.value;
+            const category = userCategorySelect.value;
+
+            if (email === '' || password === '' || category === '') {
+                alert('!ensure that all fields are entered before submitting');
+                return;
+            }
+
+            const staffInfo = {'email': email, 'password': password, 'user_type': category};
+            const url = "/staff-registration";
+
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(staffInfo)
+            }).then(response => response.json())
+            .then (data => {
+                console.log("success:", data);
+
+                staffEmailInput.value = '';
+                staffPasswordInput.value = '';
+                userCategorySelect.value = '';
+                // Optionally, show a success message in the modal
+                alert(data.message);
+            }).catch(error => {
+                console.error("Error:", error);
+            })
+
+        });
+    </script>
+</body>
+</html>
