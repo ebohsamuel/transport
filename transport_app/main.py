@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request
 from transport_app.user_authentication import template
 from transport_app.router import login, welcome, user_registration, logout, update_user, driver_registration
 from transport_app.router import trip_registration, trip_update, expense_registration, update_expense
-from transport_app.router import update_driver, trip_report, expense_report
+from transport_app.router import update_driver, trip_report, expense_report, total_trip_report, total_expense_report
 
 app = FastAPI()
 
@@ -19,6 +19,8 @@ app.include_router(update_expense.router)
 app.include_router(update_driver.router)
 app.include_router(trip_report.router)
 app.include_router(expense_report.router)
+app.include_router(total_trip_report.router)
+app.include_router(total_expense_report.router)
 
 
 @app.get("/")

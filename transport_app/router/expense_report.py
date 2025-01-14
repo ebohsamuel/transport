@@ -8,7 +8,7 @@ router = APIRouter(dependencies=[Depends(get_current_active_user)])
 
 
 @router.get("/expense-report/{plate_number}/{driver_id}")
-async def trip_report(
+async def expense_report(
         plate_number: str,
         driver_id: int,
         request: Request,

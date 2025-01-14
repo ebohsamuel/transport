@@ -160,7 +160,7 @@
             </div>
             <!-- section for general trip report -->
             <div class="col-12">
-                <span class="btn btn-outline-success" id="generalReport">
+                <span class="btn btn-outline-success" id="generalTrip">
                     General Trip Report
                 </span>
             </div>
@@ -253,15 +253,15 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script>
-        const generalReport = document.getElementById('generalReport');
+        const generalTrip = document.getElementById('generalTrip');
         const generalExpense = document.getElementById('generalExpense');
 
-        generalReport.addEventListener('click', function () {
-            window.location.href = '#';
+        generalTrip.addEventListener('click', function () {
+            window.location.href = '/total-trip-report';
         });
 
         generalExpense.addEventListener('click', function () {
-            window.location.href = '#';
+            window.location.href = '/total-expense-report';
         });
 
         const staffEmailInput = document.getElementById('staffEmail');
