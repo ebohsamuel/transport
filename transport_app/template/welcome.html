@@ -126,7 +126,7 @@
                             <div class="row g-3">
                                 {% for driver in drivers %}
                                 <div class="col-12 text-start">
-                                    <a class="link-light link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="#">{{ driver.plate_number }}</a>
+                                    <a class="link-light link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="/trip-report/{{ driver.plate_number }}/{{ driver.id }}">{{ driver.plate_number }}</a>
                                 </div>
                                 {% endfor %}
                             </div>
@@ -150,7 +150,7 @@
                             <div class="row g-3">
                                 {% for driver in drivers %}
                                 <div class="col-12 text-start">
-                                    <a class="link-light link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="#">{{ driver.plate_number }}</a>
+                                    <a class="link-light link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="/expense-report/{{ driver.plate_number }}/{{ driver.id }}">{{ driver.plate_number }}</a>
                                 </div>
                                 {% endfor %}
                             </div>
