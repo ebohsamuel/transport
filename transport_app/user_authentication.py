@@ -2,7 +2,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Annotated
 from sqlalchemy.orm import Session
 import jwt
-from fastapi import Depends, HTTPException, status, Request
+from fastapi import Depends, HTTPException, status, Request, Cookie
 from jwt.exceptions import InvalidTokenError, ExpiredSignatureError
 from transport_app import model, database
 from transport_app.crud import crud_user
@@ -46,20 +46,14 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     return encoded_jwt
 
 
-async def get_current_user(request: Request, db: Session = Depends(get_db)):
+async def get_current_user(access_token: str = Cookie(), db: Session = Depends(get_db)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
 
-    # Extract the token from the 'access_token' cookie
-    token = request.cookies.get("access_token")
-    if token is None or not token.startswith("Bearer "):
-        raise credentials_exception
-
-    # Remove 'Bearer ' prefix
-    token = token[len("Bearer "):]
+    token = access_token[len("Bearer "):]
 
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
