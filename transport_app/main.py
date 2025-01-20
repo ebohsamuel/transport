@@ -3,9 +3,12 @@ from transport_app.user_authentication import template
 from transport_app.router import login, welcome, user_registration, logout, update_user, driver_registration
 from transport_app.router import trip_registration, trip_update, expense_registration, update_expense
 from transport_app.router import update_driver, trip_report, expense_report, total_trip_report, total_expense_report
+from transport_app.router import notification
+
 
 app = FastAPI()
 
+app.include_router(notification.router)
 app.include_router(login.router)
 app.include_router(logout.router)
 app.include_router(welcome.router)

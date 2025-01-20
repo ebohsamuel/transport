@@ -14,7 +14,6 @@ def get_trip_by_atc(db: Session, atc_order_number: str):
     return db.query(model.Trip).filter(model.Trip.atc_order_number == atc_order_number).first()
 
 
-
 def get_trips(db: Session):
     return db.query(model.Trip).order_by(desc(model.Trip.date)).all()
 

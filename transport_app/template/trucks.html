@@ -7,15 +7,15 @@
     <title>Document</title>
 </head>
 <body>
-    <div class="container-md">
-        <div class="row g-3 mt-5">
+    <div class="container-fluid">
+        <div class="row g-3">
+            <div class="col-12">
+                {% include "navbar.html" %}
+            </div>
             <div class="col-12 text-center">
                 <span class="fs-1 fw-bold">Company Trucks</span>
             </div>
-            <div class="col-md-6 text-start">
-                <a href="/welcome" class="btn btn-outline-success" style="width: 200px;">Back</a>
-            </div>
-            <div class="col-md-6">
+            <div class="col-md-3">
                 <input type="text" class="form-control" id="searchInput" placeholder="Search" aria-label="Search">
               </div>            
             <div class="col-12">

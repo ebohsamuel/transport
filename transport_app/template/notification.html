@@ -1,0 +1,152 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row g-3">
+            <div class="col-12">
+                {% include "navbar.html" %}
+            </div>
+            <div class="col-12">
+                <span id="clearButton" class="btn btn-outline-success">Clear Messages</span>
+            </div>
+            <div id="info" class="col-12 d-flex justify-content-center align-items-center" style="height: 50dvh;">
+                <span class="fw-bold text-danger">No new notification</span>
+            </div>
+            <div class="col-12" id="messageContainer">
+                <div class="row flex-column g-3" id="message">
+                    <!-- <div class="col-12 border border-success border shadow align-self-center" style="width: fit-content;">
+                        I want to meet you
+                    </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+        const info = document.getElementById('info');
+        const messageContainer = document.getElementById('messageContainer');
+        const message = document.getElementById('message');
+        const clearButton = document.getElementById('clearButton');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        clearButton.addEventListener('click', () => {
+            message.innerHTML = '';
+            messageContainer.classList.add('d-none');
+            info.classList.remove('d-none');
+
+        });
+
+        let x;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            message.innerHTML = '';
+            x = [];
+            Array.from(navLinks).forEach(navLink => {
+
+                if (navLink.href === window.location.href) {
+
+                    Array.from(navLinks).forEach(navLink => {
+                        navLink.classList.remove('active')
+                    });
+                    
+                    navLink.classList.add('active');
+                }
+            });
+
+            tripNotification();
+            expenseNotification();
+        });
+
+        async function tripNotification() {
+            let tripData = [];
+            const url = "/notification-trip";
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`http request error: ${response.status}`);
+                }
+
+                const results = await response.json();
+                console.log(results);
+
+                
+                if (results.length !== 0) {
+
+                    Array.from(results).forEach(result => {
+                        tripData.push(`
+                            <div class="col-12 text-success fst-italic fw-semibold" style="width: fit-content;">
+                                Please update the customer info for the trip record of ${result['plate_number']} loaded on ${result['loading_date']}.
+                            </div>
+                        `);
+                    });
+
+                    info.classList.add('d-none');
+
+                    message.innerHTML = tripData.join('');
+                    
+                    x = tripData;
+                    
+                } else if (results.length === 0) {
+                    messageContainer.classList.add('d-none');
+                    return;
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+
+        async function expenseNotification() {
+            let expenseData = [];
+            const url = "/notification-expense";
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`http request error: ${response.status}`);
+                }
+
+                const results = await response.json();
+                console.log(results);
+
+                
+                if (results.length !== 0) {
+
+                    Array.from(results).forEach(result => {
+                        expenseData.push(`
+                            <div class="col-12 text-success fst-italic fw-semibold" style="width: fit-content;">
+                                Please update the expense amount incurred by ${result['plate_number']} on ${result['expense_date']}.
+                            </div>
+                        `);
+                    });
+
+                    info.classList.add('d-none');
+                    messageContainer.classList.remove('d-none');
+                    message.innerHTML = message.innerHTML + expenseData.join('');
+                    
+                
+                    
+                } else if (results.length === 0) {
+
+                    if (x.length === 0) {
+                        messageContainer.classList.add('d-none');
+                    }
+                    return;
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+    </script>
+</body>
+</html>
