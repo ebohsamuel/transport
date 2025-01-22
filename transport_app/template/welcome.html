@@ -294,8 +294,6 @@
                 body: JSON.stringify(staffInfo)
             }).then(response => response.json())
             .then (data => {
-                console.log("success:", data);
-
                 staffEmailInput.value = '';
                 staffPasswordInput.value = '';
                 userCategorySelect.value = '';

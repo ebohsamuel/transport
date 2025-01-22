@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, Request, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from transport_app.user_authentication import template, get_db, check_manager
 from transport_app.crud import crud_user
 
@@ -10,9 +11,9 @@ router = APIRouter(dependencies=[Depends(check_manager)])
 @router.get("/staff-list", response_class=HTMLResponse)
 async def user_list(
         request: Request,
-        db: Session = Depends(get_db)
+        db: AsyncSession = Depends(get_db)
 ):
-    users = crud_user.get_users(db)
+    users = await crud_user.get_users(db)
     return template.TemplateResponse("user_list.html", {"request": request, "users": users})
 
 
@@ -23,7 +24,7 @@ async  def update_user(
         user_type: str | None = Form(default=None),
         password: str | None = Form(default=None),
         email: str | None = Form(default=None),
-        db: Session = Depends(get_db),
+        db: AsyncSession = Depends(get_db),
 
 ):
     user_details = {
@@ -32,5 +33,5 @@ async  def update_user(
         "password": password,
         "email": email,
     }
-    db_user = crud_user.update_user(db, user_details=user_details, user_id=user_id)
+    db_user = await crud_user.update_user(db, user_details=user_details, user_id=user_id)
     return RedirectResponse(url="/staff-list", status_code=303)

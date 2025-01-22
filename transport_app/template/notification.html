@@ -59,9 +59,10 @@
                     navLink.classList.add('active');
                 }
             });
-
+            console.log('first');
             tripNotification();
             expenseNotification();
+            console.log('fourth');
         });
 
         async function tripNotification() {
@@ -75,8 +76,8 @@
                 }
 
                 const results = await response.json();
-                console.log(results);
-
+                // console.log(results);
+                console.log('second');
                 
                 if (results.length !== 0) {
 
@@ -116,7 +117,8 @@
                 }
 
                 const results = await response.json();
-                console.log(results);
+                // console.log(results);
+                console.log('third');
 
                 
                 if (results.length !== 0) {

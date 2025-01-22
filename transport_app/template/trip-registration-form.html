@@ -17,7 +17,7 @@
             </div>
             <div class="col-md-6">
                 <label for="loadingDate" class="form-label fs-5 text-secondary fw-medium">Loading Date</label>
-                <input type="date" name="date" class="form-control" id="loadingDate">
+                <input type="date" name="loading_date" class="form-control" id="loadingDate">
             </div>
             <div class="col-md-6">
                 <label for="dieselDate" class="form-label fs-5 text-secondary fw-medium">Diesel Date</label>
@@ -65,13 +65,8 @@
     <script>
         const inputElements = document.querySelectorAll('input.form-control');
         const submitButton = document.getElementById('submitButton');
-        const backButton = document.getElementById('backButton');
         const driver_id = parseInt(document.getElementById('driver_id').innerHTML);
         const trip = {};
-
-        backButton.addEventListener('click', function () {
-            window.location.href = '/welcome'
-        });
 
         submitButton.addEventListener('click', function (){
             let isvalid = true;
@@ -89,7 +84,7 @@
                         if (property === 'dispatch' || property === 'bonus') {
                             trip[property] = parseInt(data.value);  // Ensure integers for dispatch and bonus
                         } else if (property === 'diesel_litres' || property === 'amount') {
-                            trip[property] = parseFloat(data.value);  // Ensure floats for diesel_litres and amount
+                            trip[property] = parseInt(data.value);  // Ensure floats for diesel_litres and amount
                         } else if (property === 'diesel_amount') {
                             trip[property] = parseInt(data.value);  // Ensure integer for diesel_amount
                         } else {
@@ -99,6 +94,7 @@
                     trip[property] = null;
                 }
             });
+            console.log(trip);
 
             if (!isvalid) {
                 alert('Ensure the inputs marked with * are entered before submitting');
@@ -120,7 +116,6 @@
                 body: JSON.stringify(trip)
            }).then (response => response.json())
            .then (data => {
-                console.log('success:', data);
                 inputElements.forEach(function(data) {
                     data.value = '';
                 });

@@ -1,10 +1,10 @@
 from datetime import datetime, timedelta, timezone
 from typing import Annotated
-from sqlalchemy.orm import Session
 import jwt
-from fastapi import Depends, HTTPException, status, Request, Cookie
+from fastapi import Depends, HTTPException, status, Cookie
 from jwt.exceptions import InvalidTokenError, ExpiredSignatureError
-from transport_app import model, database
+from sqlalchemy.ext.asyncio import AsyncSession
+from transport_app import database
 from transport_app.crud import crud_user
 from transport_app.schemas import schemas_user, schemas_token
 from fastapi.templating import Jinja2Templates
@@ -15,19 +15,14 @@ template = Jinja2Templates(directory="transport_app/template")
 SECRET_KEY = "8dc23b8d0f3463589532b06f50c36056e5bbf29aeb6ae9bbb8646fcf0bc199e0"
 ALGORITHM = "HS256"
 
-model.Base.metadata.create_all(bind=database.engine)
+
+async def get_db():
+    async with database.async_SessionLocal() as session:
+        yield session
 
 
-def get_db():
-    db = database.SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
-def authenticate_user(db: Session, email: str, password: str):
-    user_data = crud_user.get_user_by_email(db, email)
+async def authenticate_user(db: AsyncSession, email: str, password: str):
+    user_data = await crud_user.get_user_by_email(db, email)
     if not user_data:
         return False
     if not crud_user.pwd_context.verify(password, user_data.hashed_password):
@@ -46,7 +41,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     return encoded_jwt
 
 
-async def get_current_user(access_token: str = Cookie(), db: Session = Depends(get_db)):
+async def get_current_user(access_token: str = Cookie(), db: AsyncSession = Depends(get_db)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -65,7 +60,7 @@ async def get_current_user(access_token: str = Cookie(), db: Session = Depends(g
         raise credentials_exception
     except InvalidTokenError:
         raise credentials_exception
-    user_data = crud_user.get_user_by_email(db, email=token_data.username)
+    user_data = await crud_user.get_user_by_email(db, email=token_data.username)
     if user_data is None:
         raise credentials_exception
     return user_data

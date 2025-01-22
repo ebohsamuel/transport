@@ -1,17 +1,17 @@
 from pydantic import BaseModel
-import datetime
+from datetime import date
 
 
 class TripBase(BaseModel):
-    date: datetime.date | None
+    loading_date: date | None
     atc_order_number: str | None
     dispatch: int | None
     bonus: int | None
-    diesel_litres: float | None
+    diesel_litres: int | None
     diesel_amount: int | None
-    diesel_date: datetime.date | None
+    diesel_date: date | None
     customer_name: str | None
-    amount: float | None
+    amount: int | None
 
 
 class TripCreate(TripBase):
