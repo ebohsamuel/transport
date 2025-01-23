@@ -281,7 +281,10 @@
                 return;
 
             } else if (startDate.value !== '' && endDate.value !== '') {
-                const dateFilteredBodyRows = Array.from(bodyRows).filter(row => {
+                const visibleBodyRow = Array.from(bodyRows).filter(row => {
+                    return window.getComputedStyle(row).display !== 'none';
+                });
+                const dateFilteredBodyRows = Array.from(visibleBodyRow).filter(row => {
                     let loadingDate = new Date(Array.from(row.children)[1].innerHTML.trim());
                     return loadingDate >= new Date(startDate.value) && loadingDate <= new Date(endDate.value);
                 });
