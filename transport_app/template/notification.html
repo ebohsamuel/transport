@@ -10,9 +10,6 @@
     {% include "navbar.html" %}
     <div class="container-fluid">
         <div class="row g-3 pt-3">
-            <div class="col-12">
-                <span id="clearButton" class="btn btn-outline-success">Clear Messages</span>
-            </div>
             <div id="info" class="col-12 d-flex justify-content-center align-items-center" style="height: 50dvh;">
                 <span class="fw-bold text-danger">No new notification</span>
             </div>
@@ -33,13 +30,6 @@
         const message = document.getElementById('message');
         const clearButton = document.getElementById('clearButton');
         const navLinks = document.querySelectorAll('.nav-link');
-
-        clearButton.addEventListener('click', () => {
-            message.innerHTML = '';
-            messageContainer.classList.add('d-none');
-            info.classList.remove('d-none');
-
-        });
 
         document.addEventListener('DOMContentLoaded', () => {
             message.innerHTML = '';
@@ -96,7 +86,7 @@
                     Array.from(results['expenses']).forEach(expense => {
                         expenseData.push(`
                             <div class="col-12 text-success fst-italic fw-semibold" style="width: fit-content;">
-                                Please update the expense amount incurred for ${expense['plate_number']} loaded on ${expense['expense_date']}.
+                                Please update the expense amount incurred by ${expense['plate_number']} on ${expense['expense_date']}.
                             </div>
                         `);
                     });  

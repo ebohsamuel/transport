@@ -45,8 +45,8 @@ async def create_trip(db: AsyncSession, trip: schemas_trip.TripCreate, driver_id
 async def update_trip(db: AsyncSession, trip_id: int, trip_details: dict):
     db_trip = await get_trip_by_id(db, trip_id)
     try:
-        if trip_details["date"]:
-            db_trip.loading_date = trip_details["date"]
+        if trip_details["loading_date"]:
+            db_trip.loading_date = trip_details["loading_date"]
         if trip_details["atc_order_number"]:
             db_trip.atc_order_number = trip_details["atc_order_number"]
         if trip_details["customer_name"]:

@@ -50,5 +50,6 @@ async def update_trip(
         "diesel_date": diesel_date,
         "driver_name": driver_name
     }
+
     db_trip = await crud_trip.update_trip(db, trip_id, trip_details)
     return RedirectResponse(url="/trips", status_code=303)
