@@ -7,11 +7,9 @@
     <title>Document</title>
 </head>
 <body>
+    {% include "navbar.html" %}
     <div class="container-fluid">
-        <div class="row g-3">
-            <div class="col-12">
-                {% include "navbar.html" %}
-            </div>
+        <div class="row g-3 pt-3">
             <div class="col-12">
                 <span id="clearButton" class="btn btn-outline-success">Clear Messages</span>
             </div>
@@ -43,9 +41,7 @@
 
         });
 
-        let x;
-
-        document.addEventListener('DOMContentLoaded', async () => {
+        document.addEventListener('DOMContentLoaded', () => {
             message.innerHTML = '';
             x = [];
             Array.from(navLinks).forEach(navLink => {
@@ -59,15 +55,17 @@
                     navLink.classList.add('active');
                 }
             });
+
             console.log('first');
-            tripNotification();
-            expenseNotification();
-            console.log('fourth');
+            notification();
+            console.log('third');
+            
         });
 
-        async function tripNotification() {
+        async function notification() {
             let tripData = [];
-            const url = "/notification-trip";
+            let expenseData = [];
+            const url = "/notification-report";
 
             try {
                 const response = await fetch(url);
@@ -76,74 +74,36 @@
                 }
 
                 const results = await response.json();
-                // console.log(results);
-                console.log('second');
+        
+                if (results['expenses'].length !== 0 || results['trips'].length !== 0) {
+                    info.classList.add('d-none');
+                }
                 
-                if (results.length !== 0) {
+                if (results['trips'].length !== 0) {
 
-                    Array.from(results).forEach(result => {
+                    Array.from(results['trips']).forEach(trip => {
                         tripData.push(`
                             <div class="col-12 text-success fst-italic fw-semibold" style="width: fit-content;">
-                                Please update the customer info for the trip record of ${result['plate_number']} loaded on ${result['loading_date']}.
+                                Please update the customer info for the trip record of ${trip['plate_number']} loaded on ${trip['loading_date']}.
                             </div>
                         `);
-                    });
-
-                    info.classList.add('d-none');
-
-                    message.innerHTML = tripData.join('');
-                    
-                    x = tripData;
-                    
-                } else if (results.length === 0) {
-                    messageContainer.classList.add('d-none');
-                    return;
-                }
-                
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        }
-
-
-        async function expenseNotification() {
-            let expenseData = [];
-            const url = "/notification-expense";
-
-            try {
-                const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error(`http request error: ${response.status}`);
+                    });  
+                    message.innerHTML = tripData.join('');   
                 }
 
-                const results = await response.json();
-                // console.log(results);
-                console.log('third');
+                if (results['expenses'].length !== 0) {
 
-                
-                if (results.length !== 0) {
-
-                    Array.from(results).forEach(result => {
+                    Array.from(results['expenses']).forEach(expense => {
                         expenseData.push(`
                             <div class="col-12 text-success fst-italic fw-semibold" style="width: fit-content;">
-                                Please update the expense amount incurred by ${result['plate_number']} on ${result['expense_date']}.
+                                Please update the expense amount incurred for ${expense['plate_number']} loaded on ${expense['expense_date']}.
                             </div>
                         `);
-                    });
-
-                    info.classList.add('d-none');
-                    messageContainer.classList.remove('d-none');
-                    message.innerHTML = message.innerHTML + expenseData.join('');
-                    
-                
-                    
-                } else if (results.length === 0) {
-
-                    if (x.length === 0) {
-                        messageContainer.classList.add('d-none');
-                    }
-                    return;
+                    });  
+                    message.innerHTML += expenseData.join('');   
                 }
+
+                console.log('second');
                 
             } catch (error) {
                 console.error('Error:', error);

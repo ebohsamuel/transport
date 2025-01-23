@@ -16,39 +16,37 @@ async def notification(request: Request):
     return template.TemplateResponse("notification.html", {"request": request})
 
 
-@router.get("/notification-trip")
-async def trip_notification(db: AsyncSession = Depends(get_db)):
-    result = await db.scalars(
+@router.get("/notification-report")
+async def report_notification(db: AsyncSession = Depends(get_db)):
+    trip_result = await db.scalars(
         select(model.Trip)
         .options(selectinload(model.Trip.driver))
         .filter(model.Trip.customer_name.is_(None))
     )
 
-    trips = result.all()
-    data = []
-    for trip in trips:
-        x = {
-            'loading_date': trip.loading_date,
-            'plate_number': trip.driver.plate_number
-        }
-        data.append(x)
-        await asyncio.sleep(0)
-    return data
-
-
-@router.get("/notification-expense")
-async def expense_notification(db: AsyncSession = Depends(get_db)):
-    result = await db.scalars(
+    expense_result = await db.scalars(
         select(model.Expense)
         .options(selectinload(model.Expense.driver))
         .filter(model.Expense.amount.is_(None))
     )
-    expenses = result.all()
-    data = []
+
+    expenses = expense_result.all()
+    trips = trip_result.all()
+    trip_data = []
+    expense_data = []
+
+    for trip in trips:
+        trip_data.append({
+            'loading_date': trip.loading_date,
+            'plate_number': trip.driver.plate_number
+        })
+        await asyncio.sleep(0)
+
     for expense in expenses:
-        data.append({
+        expense_data.append({
             'plate_number': expense.driver.plate_number,
             'expense_date': expense.date
         })
         await asyncio.sleep(0)
-    return data
+
+    return {"expenses": expense_data, "trips": trip_data}

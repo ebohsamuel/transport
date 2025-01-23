@@ -12,11 +12,9 @@
     <title>Document</title>
 </head>
 <body>
-    <div class="container-fluid">
-        {% include "navbar.html" %}
-    </div>
+    {% include "navbar.html" %}
     <div class="container-lg text-center d-flex align-items-center justify-content-center">
-        <div class="row g-3 border border-success shadow rounded my-4" style="width: 60dvh;">
+        <div class="row g-3 border border-success shadow rounded my-4" style="width: 60dvh; height: 100dvh;">
             <div class="col-12 mt-5 mb-3">
                 <span class="fw-bold fs-2 text-success"><i class="bi bi-bus-front-fill"></i> Main Menu</span>
             </div>
@@ -38,19 +36,19 @@
                                 <form action="/driver-registration" method="post" class="row text-start g-3">
                                     <div class="col-12">
                                         <label for="firstname" class="form-label fw-medium">First Name <span class="text-danger">*</span></label>
-                                        <input type="text" name="first_name" class="form-control" style="text-transform: uppercase;" id="firstname" placeholder="Samuel" required>
+                                        <input type="text" name="first_name" class="form-control" id="firstname" placeholder="Samuel" required>
                                     </div>
                                     <div class="col-12">
                                         <label for="lastname" class="form-label fw-medium">Last Name <span class="text-danger">*</span></label>
-                                        <input type="text" name="last_name" class="form-control" style="text-transform: uppercase;" id="lastname" placeholder="Eboh" required>
+                                        <input type="text" name="last_name" class="form-control" id="lastname" placeholder="Eboh" required>
                                     </div>
                                     <div class="col-12">
                                         <label for="phone_number" class="form-label fw-medium">Phone Number <span class="text-danger">*</span></label>
-                                        <input type="text" name="phone_number" class="form-control" style="text-transform: uppercase;" id="phone_number" placeholder="08034587596" required>
+                                        <input type="text" name="phone_number" class="form-control" id="phone_number" placeholder="08034587596" required>
                                     </div>
                                     <div class="col-12">
                                         <label for="platenumber" class="form-label fw-medium">Plate Number <span class="text-danger">*</span></label>
-                                        <input type="text" name="plate_number" class="form-control" style="text-transform: uppercase;" id="platenumber" placeholder="tak448xa" required>
+                                        <input type="text" name="plate_number" class="form-control" id="platenumber" placeholder="tak448xa" required>
                                     </div>
                                     <div class="col-12">
                                         <button type="submit" class="btn btn-primary">Submit</button>
