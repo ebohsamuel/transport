@@ -11,7 +11,7 @@ from alembic import context
 config = context.config
 
 # this is to override the sqlalchemy.url parameter set in alembic.ini file
-DATABASE_URL = os.getenv("database_url")
+DATABASE_URL = os.getenv("DATABASE_URL")
 if DATABASE_URL:
     config.set_main_option("sqlalchemy.url", DATABASE_URL)
 
