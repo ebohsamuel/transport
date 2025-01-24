@@ -8,12 +8,13 @@ from transport_app import database
 from transport_app.crud import crud_user
 from transport_app.schemas import schemas_user, schemas_token
 from fastapi.templating import Jinja2Templates
+import os
 
 template = Jinja2Templates(directory="transport_app/template")
 
 
-SECRET_KEY = "8dc23b8d0f3463589532b06f50c36056e5bbf29aeb6ae9bbb8646fcf0bc199e0"
-ALGORITHM = "HS256"
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM")
 
 
 async def get_db():

@@ -1,6 +1,5 @@
 from fastapi import FastAPI, Request
-from contextlib import AsyncExitStack
-
+import os
 from transport_app.crud import crud_user
 from transport_app.schemas import schemas_user
 from transport_app.database import async_engine, Base
@@ -40,9 +39,9 @@ async def on_startup():
     db = await anext(db_generator)
     try:
         data = {
-            "email": "eng1102493@gmail.com",
-            "password": "24bennSOO",
-            "user_type": "manager"
+            "email": os.getenv("admin_email"),
+            "password": os.getenv("admin_password"),
+            "user_type": os.getenv("admin_type")
         }
         schema_data = schemas_user.UserCreate(**data)
 

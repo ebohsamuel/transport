@@ -1,3 +1,4 @@
+import os
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -5,7 +6,10 @@ from passlib.context import CryptContext
 from transport_app import model
 from transport_app.schemas import schemas_user
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+scheme = os.getenv("scheme")
+
+pwd_context = CryptContext(schemes=[scheme], deprecated="auto")
 
 
 async def create_user(db: AsyncSession, user: schemas_user.UserCreate):
