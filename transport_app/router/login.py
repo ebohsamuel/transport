@@ -35,5 +35,6 @@ async def login_for_access_token(
         key="access_token",
         value=f"Bearer {access_token}",  # Bearer token format
         httponly=True,
+        samesite="strict"
     )
     return response
