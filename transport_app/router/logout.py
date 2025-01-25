@@ -1,9 +1,9 @@
 import asyncio
-
+from transport_app.user_authentication import get_current_active_user
 from fastapi.responses import RedirectResponse
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, Depends
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(get_current_active_user)])
 
 
 @router.get("/logout")

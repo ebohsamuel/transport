@@ -5,9 +5,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from transport_app import model
-from transport_app.user_authentication import template, get_db
+from transport_app.user_authentication import template, get_db, check_manager
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(check_manager)])
 
 
 @router.get("/notification")
