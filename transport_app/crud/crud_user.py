@@ -46,6 +46,7 @@ async def get_users(db: AsyncSession):
 
 async def update_user(db: AsyncSession, user_details: dict, user_id: int):
     db_user = await get_user_by_id(db, user_id)
+
     try:
         if "is_active" in user_details and user_details["is_active"] is not None:
             db_user.is_active = user_details["is_active"]
