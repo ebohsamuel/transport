@@ -2,7 +2,6 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import desc, select
 from sqlalchemy.orm import selectinload
-
 from transport_app import model
 from transport_app.schemas import schemas_expense
 
