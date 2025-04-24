@@ -4,7 +4,7 @@ import os
 
 
 # sqlite+aiosqlite:///./transport.db or postgresql+asyncpg://postgres:PG/eng1102493@localhost:5432/transport for local server"
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = "postgresql+asyncpg://postgres:PG/eng1102493@localhost:5432/transport"
 
 async_engine = create_async_engine(DATABASE_URL)
 

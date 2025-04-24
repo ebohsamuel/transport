@@ -13,8 +13,8 @@ import os
 template = Jinja2Templates(directory="transport_app/template")
 
 
-SECRET_KEY = os.getenv("SECRET_KEY")
-ALGORITHM = os.getenv("ALGORITHM")
+SECRET_KEY = "ec74be764e3ff9ca044d6b13094bbcfad3c70e190410c01c233b0428a5ce67a5"
+ALGORITHM = "HS256"
 
 
 async def get_db():
@@ -68,19 +68,19 @@ async def get_current_user(access_token: str = Cookie(), db: AsyncSession = Depe
 
 
 async def get_current_active_user(current_user: Annotated[schemas_user.User, Depends(get_current_user)]):
-    if not current_user.is_active:
+    if current_user.status != "active":
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
 
 async def check_manager(user: schemas_user.UserCreate = Depends(get_current_active_user)):
-    if user.user_type != 'manager':
+    if user.role != 'manager':
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You do not have the necessary permissions.")
     return user
 
 
 async def check_accountant(user: schemas_user.UserCreate = Depends(get_current_active_user)):
-    if user.user_type != 'accountant':
+    if user.role != 'accountant':
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You do not have the necessary permissions.")
     return user
 

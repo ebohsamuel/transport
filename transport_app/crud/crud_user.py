@@ -7,14 +7,16 @@ from transport_app import model
 from transport_app.schemas import schemas_user
 
 
-scheme = os.getenv("scheme")
+scheme = "bcrypt"
 
-pwd_context = CryptContext(schemes=[scheme], deprecated="auto")
+pwd_context = CryptContext(schemes=(scheme), deprecated="auto")
 
 
 async def create_user(db: AsyncSession, user: schemas_user.UserCreate):
-    hashed_password = pwd_context.hash(user.password)
-    db_user = model.User(email=user.email, hashed_password=hashed_password, user_type=user.user_type)
+    user_dict = user.model_dump(exclude_none=True)
+    password = user_dict.pop("password")
+    hashed_password = pwd_context.hash(password)
+    db_user = model.User(**user_dict, hashed_password=hashed_password)
     try:
         db.add(db_user)
         await db.commit()
@@ -48,14 +50,26 @@ async def update_user(db: AsyncSession, user_details: dict, user_id: int):
     db_user = await get_user_by_id(db, user_id)
 
     try:
-        if "is_active" in user_details and user_details["is_active"] is not None:
-            db_user.is_active = user_details["is_active"]
-        if user_details["user_type"]:
-            db_user.user_type = user_details["user_type"]
-        if user_details["email"]:
-            db_user.email = user_details["email"]
-        if user_details["password"]:
-            db_user.hashed_password = pwd_context.hash(user_details["password"])
+        if user_details.get("full_name"):
+            db_user.full_name = user_details.get("full_name")
+        if user_details.get("phone"):
+            db_user.phone = user_details.get("phone")
+        if user_details.get("email"):
+            db_user.email = user_details.get("email")
+        if user_details.get("password"):
+            db_user.hashed_password = pwd_context.hash(user_details.get("password"))
+        if user_details.get("address"):
+            db_user.address = user_details.get("address")
+        if user_details.get("next_of_kin"):
+            db_user.next_of_kin = user_details.get("next_of_kin")
+        if user_details.get("next_of_kin_address"):
+            db_user.next_of_kin_address = user_details.get("next_of_kin_address")
+        if user_details.get("next_of_kin_phone"):
+            db_user.next_of_kin_phone = user_details.get("next_of_kin_phone")
+        if user_details.get("status"):
+            db_user.status = user_details.get("status")
+        if user_details.get("role"):
+            db_user.role = user_details.get("role")
         await db.commit()
         await db.refresh(db_user)
         return db_user

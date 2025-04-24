@@ -12,21 +12,31 @@ class User(Base):
     email: Mapped[str] = mapped_column(unique=True, index=True, nullable=True)
     hashed_password: Mapped[str] = mapped_column(nullable=True)
     full_name: Mapped[str] = mapped_column(nullable=True)
-    is_active: Mapped[bool] = mapped_column(default=True, nullable=True)
-    user_type: Mapped[str] = mapped_column(nullable=True)
+    phone: Mapped[str] = mapped_column(nullable=True)
+    address: Mapped[str] = mapped_column(nullable=True)
+    next_of_kin: Mapped[str] = mapped_column(nullable=True)
+    next_of_kin_address: Mapped[str] = mapped_column(nullable=True)
+    next_of_kin_phone: Mapped[str] = mapped_column(nullable=True)
+    status: Mapped[str] = mapped_column(nullable=True)
+    role: Mapped[str] = mapped_column(nullable=True)
 
 
-class Driver(Base):
-    __tablename__ = "drivers"
+class Truck(Base):
+    __tablename__ = "truck"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    first_name: Mapped[str] = mapped_column(nullable=True)
-    last_name: Mapped[str] = mapped_column(nullable=True)
-    phone_number: Mapped[str] = mapped_column(unique=True, index=True, nullable=True)
-    plate_number: Mapped[str] = mapped_column(unique=True, index=True, nullable=True)
+    plate_number: Mapped[str] = mapped_column(index=True, nullable=True)
+    vehicle_model: Mapped[str] = mapped_column(nullable=True)
+    tonnage: Mapped[str] = mapped_column(nullable=True)
+    driver_name: Mapped[str] = mapped_column(nullable=True)
+    phone_number: Mapped[str] = mapped_column(nullable=True)
+    address: Mapped[str] = mapped_column(nullable=True)
+    guarantor: Mapped[str] = mapped_column(nullable=True)
+    guarantor_phone: Mapped[str] = mapped_column(nullable=True)
+    guarantor_address: Mapped[str] = mapped_column(nullable=True)
 
-    trip = relationship('Trip', back_populates='driver')
-    expense = relationship('Expense', back_populates='driver')
+    trip = relationship('Trip', back_populates='truck')
+    expense = relationship('Expense', back_populates='truck')
 
 
 class Trip(Base):
@@ -35,7 +45,7 @@ class Trip(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     loading_date: Mapped[date] = mapped_column(Date, nullable=True)
     atc_order_number: Mapped[str] = mapped_column(unique=True, index=True, nullable=True)
-    driver_id: Mapped[int] = mapped_column(ForeignKey("drivers.id"))
+    truck_id: Mapped[int] = mapped_column(ForeignKey("truck.id"))
     driver_name: Mapped[str] = mapped_column(nullable=True)
     dispatch: Mapped[int] = mapped_column(nullable=True)
     bonus: Mapped[int] = mapped_column(nullable=True)
@@ -45,7 +55,7 @@ class Trip(Base):
     customer_name: Mapped[str] = mapped_column(nullable=True)
     amount: Mapped[int] = mapped_column(nullable=True)
 
-    driver = relationship('Driver', back_populates='trip')
+    truck = relationship('Truck', back_populates='trip')
 
 
 class Expense(Base):
@@ -54,8 +64,8 @@ class Expense(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     date: Mapped[date] = mapped_column(Date, nullable=True)
     description: Mapped[str] = mapped_column(nullable=True)
-    driver_id: Mapped[int] = mapped_column(ForeignKey("drivers.id"))
+    truck_id: Mapped[int] = mapped_column(ForeignKey("truck.id"))
     driver_name: Mapped[str] = mapped_column(nullable=True)
     amount: Mapped[int] = mapped_column(nullable=True)
 
-    driver = relationship('Driver', back_populates='expense')
+    truck = relationship('Truck', back_populates='expense')

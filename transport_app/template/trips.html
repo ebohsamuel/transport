@@ -1,147 +1,447 @@
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <title>Document</title>
-</head>
-<body>
-    {% include "navbar.html" %}
-    <div class="container-fluid">
-        <div class="row g-3 pt-3">
-            <div class="col-12 text-center">
-                <span class="fs-1 fw-bold">Company Trips</span>
+{% extends "dashboard.html" %}
+
+{% block title %} Trips {% endblock %}
+
+{% block content %}
+<div class="row g-3 pt-3">
+    <div class="col-md-4">
+        <input type="text" class="form-control" id="truckSearch" placeholder="Truck No...">
+    </div>
+    <div class="col-md-4">
+        <input type="text" class="form-control" id="dateSearch" placeholder="Date...">
+    </div>
+    <div class="col-md-4">
+        <span id="addTrip" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#tripregistration" style="width: 100%;">Add Trip <i class="bi bi-plus"></i></span>
+    </div>
+    <!-- modal for registering new trip  -->
+    <div class="modal fade" id="tripregistration" tabindex="-1"  aria-labelledby="tripRegistrationlabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-fullscreen-md-down modal-lg">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="tripRegistrationlabel">Enter New Trip</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="col-md-3">
-                <input type="text" class="form-control" id="searchInput" placeholder="Search" aria-label="Search">
-              </div>            
-            <div class="col-12">
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead class="table-dark">
-                          <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Date Loaded</th>
-                            <th scope="col">ATC Order Number</th>
-                            <th scope="col">Driver Name</th>
-                            <th scope="col">Dispatch</th>
-                            <th scope="col">Bonus</th>
-                            <th scope="col">Diesel Litres</th>
-                            <th scope="col">Diesel Amount</th>
-                            <th scope="col">Diesel Date</th>
-                            <th scope="col">Customer Name</th>
-                            <th scope="col">Trip Amount</th>
-                            <th scope="col"></th>
-                          </tr>
-                        </thead>
-                        <tbody class="table-group-divider">
-                          {% for trip in trips %}
-                          <tr>
-                            <th scope="row">{{ loop.index }}</th>
-                            <td>{{ trip.loading_date }}</td>
-                            <td>{{ trip.atc_order_number }}</td>
-                            <td>{{ trip.driver_name }}</td>
-                            <td>{{ trip.dispatch }}</td>
-                            <td>{{ trip.bonus }}</td>
-                            <td>{{ trip.diesel_litres }}</td>
-                            <td>{{ trip.diesel_amount }}</td>
-                            <td>{{ trip.diesel_date }}</td>
-                            <td>{{ trip.customer_name }}</td>
-                            <td>{{ trip.amount }}</td>
-                            <td><span class="btn btn-success" data-bs-toggle="modal" data-bs-target="#tripUpdate{{ trip.id }}">Update</span></td>
-                                        <!-- modal for trip update -->
-                            <div class="modal fade" id="tripUpdate{{ trip.id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" data-bs-keyboard="true" aria-labelledby="tripUpdatelabel" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-fullscreen-md-down modal-lg">
-                                    <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h1 class="modal-title fs-5" id="tripUpdatelabel">{{ trip.driver.plate_number }} Trip Update</h1>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="container-fluid">
-                                            <!-- trip update form -->
-                                            <form action="/trip-update/{{ trip.id }}" method="post" class="row text-start g-3">
-                                                <div class="col-12">
-                                                    <label for="loadingDate" class="form-label fs-5 text-secondary fw-medium">Loading Date</label>
-                                                    <input type="date" name="loading_date" class="form-control" id="loadingDate">
-                                                </div>
-                                                <div class="col-12">
-                                                    <label for="dieselDate" class="form-label fs-5 text-secondary fw-medium">Diesel Date</label>
-                                                    <input type="date" name="diesel_date" class="form-control" id="dieselDate">
-                                                </div>
-                                                <div class="col-12">
-                                                    <label for="atcOrderNumber" class="form-label fs-5 text-secondary fw-medium">ATC Order Number</label>
-                                                    <input type="text" name="atc_order_number" class="form-control" id="atcOrderNumber">
-                                                </div>
-                                                <div class="col-12">
-                                                    <label for="driverName" class="form-label fs-5 text-secondary fw-medium">Driver Name</label>
-                                                    <input type="text" name="driver_name" class="form-control" id="driverName" placeholder="First and Last Name">
-                                                </div>
-                                                <div class="col-12">
-                                                    <label for="dispatch" class="form-label fs-5 text-secondary fw-medium">Dispatch</label>
-                                                    <input type="number" name="dispatch" class="form-control" id="dispatch">
-                                                </div>
-                                                <div class="col-12">
-                                                    <label for="bonus" class="form-label fs-5 text-secondary fw-medium">Bonus</label>
-                                                    <input type="number" name="bonus" class="form-control" id="bonus">
-                                                </div>
-                                                <div class="col-12">
-                                                    <label for="dieselLitres" class="form-label fs-5 text-secondary fw-medium">Diesel Litres</label>
-                                                    <input type="number" name="diesel_litres" class="form-control" id="dieselLitres">
-                                                </div>
-                                                <div class="col-12">
-                                                    <label for="dieselAmount" class="form-label fs-5 text-secondary fw-medium">Diesel Amount</label>
-                                                    <input type="number" name="diesel_amount" class="form-control" id="dieselAmount">
-                                                </div>
-                                                <div class="col-12">
-                                                    <label for="tripAmount" class="form-label fs-5 text-secondary fw-medium">Trip Amount</label>
-                                                    <input type="number" name="amount" class="form-control" id="tripAmount">
-                                                </div>
-                                                <div class="col-12">
-                                                    <label for="customerName" class="form-label fs-5 text-secondary fw-medium">Customer Name</label>
-                                                    <input type="text" name="customer_name" class="form-control" id="customerName">
-                                                </div>
-                                                <div class="col-12 mt-3">
-                                                    <button type="submit" class="btn btn-primary">Submit</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    </div>
-                                    </div>
-                                </div>
-                            </div>
-                          </tr>
-                          {% endfor %}
-                        </tbody>
-                    </table>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <!-- trip registration form -->
+                    <form id="myForm" class="row text-start g-3" autocomplete="on">
+                        <div class="col-12">
+                            <div id="notice" class="text-danger fw-semibold" style="font-family: sans-serif;"></div>
+                            <label for="loading_date" class="form-label fw-medium">Loading Date</label>
+                            <input type="date" name="loading_date" class="form-control" id="loading_date">
+                        </div>
+                        <div class="col-12">
+                            <label for="diesel_date" class="form-label fw-medium">Diesel Date</label>
+                            <input type="date" name="diesel_date" class="form-control" id="diesel_date">
+                        </div>
+                        <div class="col-12">
+                            <label for="plate_number" class="form-label fw-medium">Plate Number <span class="text-danger fw-bold">*</span></label>
+                            <select class="form-select" id="plate_number" name="plate_number">
+                                <option selected value="">Select Plate Number...</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label for="truck_id" class="form-label fw-medium">Truck Id <span class="text-danger fw-bold">*</span></label>
+                            <input type="text" name="truck_id" class="form-control" id="truck_id" readonly required>
+                        </div>
+                        <div class="col-12">
+                            <label for="atc_order_number" class="form-label fw-medium">ATC Order Number</label>
+                            <input type="text" name="atc_order_number" class="form-control" id="atc_order_number">
+                        </div>
+                        <div class="col-12">
+                            <label for="driver_name" class="form-label fw-medium">Driver Name <span class="text-danger fw-bold">*</span></label>
+                            <input type="text" name="driver_name" class="form-control" id="driver_name" readonly required>
+                        </div>
+                        <div class="col-12">
+                            <label for="dispatch" class="form-label fw-medium">Dispatch <span class="text-danger fw-bold">*</span></label>
+                            <input type="number" name="dispatch" class="form-control" id="dispatch" required>
+                        </div>
+                        <div class="col-12">
+                            <label for="bonus" class="form-label fw-medium">Bonus <span class="text-danger fw-bold">*</span></label>
+                            <input type="number" name="bonus" class="form-control" id="bonus" required>
+                        </div>
+                        <div class="col-12">
+                            <label for="diesel_litres" class="form-label fw-medium">Diesel Litres</label>
+                            <input type="number" name="diesel_litres" class="form-control" id="diesel_litres">
+                        </div>
+                        <div class="col-12">
+                            <label for="diesel_amount" class="form-label fw-medium">Diesel Amount</label>
+                            <input type="number" name="diesel_amount" class="form-control" id="diesel_amount">
+                        </div>
+                        <div class="col-12">
+                            <label for="amount" class="form-label fw-medium">Trip Amount</label>
+                            <input type="number" name="amount" class="form-control" id="amount">
+                        </div>
+                        <div class="col-12">
+                            <label for="customer_name" class="form-label fw-medium">Customer Name</label>
+                            <input type="text" name="customer_name" class="form-control" id="customer_name">
+                        </div>
+                    </form>
                 </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary rounded-pill" onclick="registerTrip()">Submit</button>
+                <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button>
+            </div>
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script>
-        const searchInput = document.getElementById('searchInput');
-        const bodyRows = document.querySelectorAll('tbody tr');
+    <div class="col-12">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-dark">
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Date Loaded</th>
+                    <th scope="col">ATC Order Number</th>
+                    <th scope="col">Plate Number</th>
+                    <th scope="col">Driver Name</th>
+                    <th scope="col">Dispatch</th>
+                    <th scope="col">Bonus</th>
+                    <th scope="col">Diesel Litres</th>
+                    <th scope="col">Diesel Amount</th>
+                    <th scope="col">Diesel Date</th>
+                    <th scope="col">Customer Name</th>
+                    <th scope="col">Trip Amount</th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody class="table-group-divider">
+                  {% for trip in trips %}
+                  <tr>
+                    <th scope="row">{{ loop.index }}</th>
+                    <td>{{ trip.loading_date if trip.loading_date is not none else 'n/a'  }}</td>
+                    <td>{{ trip.atc_order_number if trip.atc_order_number is not none else 'n/a' }}</td>
+                    <td>{{ trip.truck.plate_number if trip.truck.plate_number is not none else 'n/a' }}</td>
+                    <td>{{ trip.driver_name if trip.driver_name is not none else 'n/a' }}</td>
+                    <td>{{ "{:,.0f}".format(trip.dispatch) if trip.dispatch is not none else 'n/a' }}</td>
+                    <td>{{ "{:,.0f}".format(trip.bonus) if trip.bonus is not none else 'n/a' }}</td>
+                    <td>{{ "{:,.0f}".format(trip.diesel_litres) if trip.diesel_litres is not none else 'n/a' }}</td>
+                    <td>{{ "{:,.0f}".format(trip.diesel_amount) if trip.diesel_amount is not none else 'n/a' }}</td>
+                    <td>{{ trip.diesel_date if trip.diesel_date is not none else 'n/a' }}</td>
+                    <td>{{ trip.customer_name if trip.customer_name is not none else 'n/a' }}</td>
+                    <td>{{ "{:,.0f}".format(trip.amount) if trip.amount is not none else 'n/a' }}</td>
+                    <td><span class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#tripUpdate{{ trip.id }}">update</span></td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+            </table>
+            {% for trip in trips %}
+            <!-- modal for trip update -->
+            <div class="modal fade" id="tripUpdate{{ trip.id }}" tabindex="-1"  aria-labelledby="tripUpdatelabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-fullscreen-md-down modal-lg">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="tripUpdatelabel">update trip info</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <!-- trip update form -->
+                            <form class="row text-start g-3">
+                                <div class="col-12">
+                                    <div class="notice text-danger fw-semibold" style="font-family: sans-serif;"></div>
+                                    <label for="id{{ trip.id }}" class="form-label fw-medium">Trip id</label>
+                                    <input type="text" class="form-control" id="id{{ trip.id }}" name="id" value="{{ trip.id }}" readonly>
+                                </div>
+                                <div class="col-12">
+                                    <label for="loading_date{{ trip.id }}" class="form-label fw-medium">Loading Date</label>
+                                    <input type="date" name="loading_date" class="form-control" id="loading_date{{ trip.id }}">
+                                </div>
+                                <div class="col-12">
+                                    <label for="diesel_date{{ trip.id }}" class="form-label fw-medium">Diesel Date</label>
+                                    <input type="date" name="diesel_date" class="form-control" id="diesel_date{{ trip.id }}">
+                                </div>
+                                <div class="col-12">
+                                    <label for="plate_number{{ trip.id }}" class="form-label fw-medium">Plate Number</label>
+                                    <select class="form-select" id="plate_number{{ trip.id }}" name="plate_number">
+                                        <option selected value="">Select Plate Number...</option>
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <label for="truck_id{{ trip.id }}" class="form-label fw-medium">Truck Id</label>
+                                    <input type="text" name="truck_id" class="form-control" id="truck_id{{ trip.id }}" readonly>
+                                </div>
+                                <div class="col-12">
+                                    <label for="atc_order_number{{ trip.id }}" class="form-label fw-medium">ATC Order Number</label>
+                                    <input type="text" name="atc_order_number" class="form-control" id="atc_order_number{{ trip.id }}">
+                                </div>
+                                <div class="col-12">
+                                    <label for="driver_name{{ trip.id }}" class="form-label fw-medium">Driver Name</label>
+                                    <input type="text" name="driver_name" class="form-control" id="driver_name{{ trip.id }}" readonly>
+                                </div>
+                                <div class="col-12">
+                                    <label for="dispatch{{ trip.id }}" class="form-label fw-medium">Dispatch</label>
+                                    <input type="number" name="dispatch" class="form-control" id="dispatch{{ trip.id }}">
+                                </div>
+                                <div class="col-12">
+                                    <label for="bonus{{ trip.id }}" class="form-label fw-medium">Bonus</label>
+                                    <input type="number" name="bonus" class="form-control" id="bonus{{ trip.id }}">
+                                </div>
+                                <div class="col-12">
+                                    <label for="diesel_litres{{ trip.id }}" class="form-label fw-medium">Diesel Litres</label>
+                                    <input type="number" name="diesel_litres" class="form-control" id="diesel_litres{{ trip.id }}">
+                                </div>
+                                <div class="col-12">
+                                    <label for="diesel_amount{{ trip.id }}" class="form-label fw-medium">Diesel Amount</label>
+                                    <input type="number" name="diesel_amount" class="form-control" id="diesel_amount{{ trip.id }}">
+                                </div>
+                                <div class="col-12">
+                                    <label for="amount{{ trip.id }}" class="form-label fw-medium">Trip Amount</label>
+                                    <input type="number" name="amount" class="form-control" id="amount{{ trip.id }}">
+                                </div>
+                                <div class="col-12">
+                                    <label for="customer_name{{ trip.id }}" class="form-label fw-medium">Customer Name</label>
+                                    <input type="text" name="customer_name" class="form-control" id="customer_name{{ trip.id }}">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary rounded-pill" onclick="updateTrip()">Submit</button>
+                        <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+        
+{% block scripts %}
+<script>
+    const modals = document.querySelectorAll('.modal.fade');
+    const myForm = document.getElementById('myForm');
+    const truckSearch = document.getElementById('truckSearch');
+    const dateSearch = document.getElementById('dateSearch');
 
-        searchInput.addEventListener('input', function () {
 
-            let value = searchInput.value.toLowerCase();
+    document.addEventListener('DOMContentLoaded', ()=> {
+        searchFilter();
+    });
 
-            bodyRows.forEach(function(row) {
+    async function registerTrip() {
+        document.getElementById('opaque').classList.remove('d-none');
+        const registrationInput = myForm.querySelectorAll('input');
 
-                const rowContent = Array.from(row.children).map(td => td.innerHTML.toLocaleLowerCase()).join(' ');
+        const selectInput = myForm.querySelector('select');
 
-                if (rowContent.includes(value)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
+        if (selectInput.value === '') {
+            document.getElementById('notice').innerHTML = 'Ensure all fields marked * are filled before submitting.';
+            document.getElementById('opaque').classList.add('d-none');
+            return;
+        } else {
+            document.getElementById('notice').innerHTML = '';
+        }
+
+        const requiredInput = Array.from(registrationInput).filter(input => input.hasAttribute('required'));
+
+        const requiredInputValues = requiredInput.map(input => input.value).filter(value => value !== '');
+
+        if (requiredInput.length !== requiredInputValues.length) {
+            document.getElementById('notice').innerHTML = 'Ensure all fields marked * are filled before submitting.';
+            document.getElementById('opaque').classList.add('d-none');
+            return;
+        } else {
+            document.getElementById('notice').innerHTML = '';
+        }
+
+        let data = {};
+        registrationInput.forEach(input => {
+            data[input.name] = input.value? input.value.toLocaleLowerCase().trim() : null;
         });
-    </script>
-</body>
-</html>
+        
+        const url = "/trip-registration";
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers : {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                document.getElementById('notice').innerHTML = errorData.detail;
+                document.getElementById('opaque').classList.add('d-none');
+                return;
+            }
+
+            const result = await response.json();
+            window.location.reload();
+
+        } catch (error) {
+            document.getElementById('opaque').classList.add('d-none');
+            console.log(error);
+        }
+    }
+
+    async function updateTrip() {
+        document.getElementById('opaque').classList.remove('d-none');
+
+        const modal = document.querySelector('.modal.fade.show');
+        const updateInput = modal.querySelectorAll('input');
+        const notice = modal.querySelector('.notice');
+
+        let data = {};
+
+        updateInput.forEach(input => {
+            data[input.name] = input.value ? input.value.toLocaleLowerCase().trim() : null
+        });
+
+
+        const url = "/trip-update";
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers : {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                notice.innerHTML = errorData.detail;
+                document.getElementById('opaque').classList.add('d-none');
+                return;
+            }
+
+            const result = await response.json();
+            window.location.reload();
+
+        } catch (error) {
+            document.getElementById('opaque').classList.add('d-none');
+            console.log(error);
+        }
+    }
+
+
+    function searchFilter() {
+        truckSearch.addEventListener('input', ()=>{
+            let truck = truckSearch.value.toLocaleLowerCase().trim();
+            let date = dateSearch.value.toLocaleLowerCase().trim();
+            activateSearch(date, truck);
+        });
+
+        dateSearch.addEventListener('input', ()=>{
+            let truck = truckSearch.value.toLocaleLowerCase().trim();
+            let date = dateSearch.value.toLocaleLowerCase().trim();
+            activateSearch(date, truck);
+        });
+    }
+
+    function activateSearch(date, truck) {
+        const rows = document.querySelectorAll('tbody tr');
+
+        rows.forEach(row => {
+            let rowPlateNumber = Array.from(row.children)[3].innerHTML.toLocaleLowerCase().trim();
+            let rowDate = Array.from(row.children)[1].innerHTML.toLocaleLowerCase().trim();
+
+            if (truck !== '' && date === '') {
+                if (rowPlateNumber.includes(truck)) {
+                    row.style.display = '';
+                }else {
+                    row.style.display = 'none';
+                }  
+            }else if (truck === '' && date !== '') {
+                if (rowDate.includes(date)) {
+                    row.style.display = '';
+                }else {
+                    row.style.display = 'none';
+                }  
+            }else if (truck !== '' && date !== '') {
+                if (rowPlateNumber.includes(truck) && rowDate.includes(date)) {
+                    row.style.display = '';
+                }else {
+                    row.style.display = 'none';
+                }  
+            }else if (truck === '' && date === '') {
+                row.style.display = '';
+            }
+        });
+    }
+
+
+
+    modals.forEach(modal => {
+        modal.addEventListener('shown.bs.modal', function() {
+            const loadingDate = modal.querySelector('input[name="loading_date"]');
+            const dieselDate = modal.querySelector('input[name="diesel_date"]');
+            loadingDate.max = new Date().toISOString().split('T')[0];
+            dieselDate.max = new Date().toISOString().split('T')[0];
+
+            getTruckList(modal);
+            getTruckInfo(modal);
+        })
+    });
+
+    async function getTruckList(modal) {
+        const truck = modal.querySelector('select[name="plate_number"]');
+        const url = "/plate-number-list";
+
+        const response = await fetch(url);
+
+        try {
+            if (!response.ok) {
+                throw new Error("Failed to load truck list.");
+            }
+            const result = await response.json();
+            plate_numbers = result.plate_numbers;
+            
+            truck.innerHTML = '<option selected value="">Select Plate Number...</option>';
+
+            Array.from(plate_numbers).forEach(plate_number => {
+                const option = document.createElement("option");
+                option.value = plate_number;
+                option.textContent = plate_number;
+                truck.appendChild(option);
+            });
+
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    function getTruckInfo(modal) {
+        const truckId = modal.querySelector('input[name="truck_id"]');
+        const driverName = modal.querySelector('input[name="driver_name"]');
+        const truck = modal.querySelector('select[name="plate_number"]');
+
+        truck.addEventListener('input', async ()=>{
+            truckId.value = '';
+            driverName.value = '';
+            const plate_number = truck.value;
+
+            if (plate_number === '') {
+                truckId.value = '';
+                driverName.value = '';
+                return;
+            }
+
+            const url = `/driver-name-and-truck-id?plate_number=${encodeURIComponent(plate_number)}`;
+
+            const response = await fetch(url);
+
+            try {
+                if (!response.ok) {
+                    throw new Error("Failed to load truck info.");
+                }
+                const result = await response.json();
+                truckId.value = result.truck_id;
+                driverName.value = result.driver_name;
+                
+
+            } catch (error) {
+                console.error(error);
+            }
+
+        });
+    }
+</script>
+{% endblock %}
