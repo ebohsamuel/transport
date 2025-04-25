@@ -2,16 +2,26 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from transport_app.user_authentication import get_current_active_user, get_db, template
 from fastapi import APIRouter, Depends, Request, HTTPException
 from transport_app.crud import crud_truck
-from transport_app.schemas import schemas_truck
-
+from transport_app.schemas import schemas_truck, schemas_user
 
 router = APIRouter(dependencies=[Depends(get_current_active_user)])
 
 
 @router.get("/truck-list")
-async def truck_list(request: Request, db: AsyncSession = Depends(get_db)):
+async def truck_list(
+        request: Request,
+        db: AsyncSession = Depends(get_db),
+        user: schemas_user.User = Depends(get_current_active_user)
+):
     trucks = await crud_truck.get_trucks(db)
-    return template.TemplateResponse("truck-list.html", {"request": request, "trucks": trucks})
+    return template.TemplateResponse(
+        "truck-list.html",
+        {
+            "request": request,
+            "trucks": trucks,
+            "full_name": user.full_name
+        }
+    )
 
 
 @router.post("/truck-registration")

@@ -1,0 +1,299 @@
+{% extends "dashboard.html" %}
+
+{% block title %} Truck List {% endblock %}
+
+{% block content %}
+<div class="row g-3 pt-3">
+    <div class="col-md-6">
+        <input type="text" class="form-control" id="truckSearch" placeholder="Truck No...">
+    </div>
+    <div class="col-md-6">
+        <span id="addTruck" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#truckregistration" style="width: 100%;">Add Truck <i class="bi bi-plus"></i></span>
+    </div>
+    <!-- modal for registering new truck  -->
+    <div class="modal fade" id="truckregistration" tabindex="-1"  aria-labelledby="truckRegistrationlabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-fullscreen-md-down modal-lg">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="truckRegistrationlabel">Enter New Truck</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <!-- truck registration form -->
+                    <form id="myForm" class="row text-start g-3" autocomplete="on">
+                        <div class="col-12">
+                            <div id="notice" class="text-danger fw-semibold" style="font-family: sans-serif;"></div>
+                            <label for="plate_number" class="form-label fw-medium">Plate Number <span class="text-danger fw-bold">*</span></label>
+                            <input type="text" class="form-control" id="plate_number" name="plate_number" required>
+                        </div>
+                        <div class="col-12">
+                            <label for="vehicle_model" class="form-label fw-medium">Vehicle Model</label>
+                            <input type="text" class="form-control" id="vehicle_model" name="vehicle_model">
+                        </div>
+                        <div class="col-12">
+                            <label for="tonnage" class="form-label fw-medium">Tonnage <span class="text-danger fw-bold">*</span></label>
+                            <input type="text" class="form-control" id="tonnage" name="tonnage" required>
+                        </div>
+                        <div class="col-12">
+                            <label for="driver_name" class="form-label fw-medium">Driver Name</label>
+                            <input type="text" class="form-control" id="driver_name" name="driver_name">
+                        </div>
+                        <div class="col-12">
+                            <label for="phone_number" class="form-label fw-medium">Driver Phone</label>
+                            <input type="text" class="form-control" id="phone_number" name="phone_number">
+                        </div>
+                        <div class="col-12">
+                            <label for="address" class="form-label fw-medium">Driver Resident</label>
+                            <input type="text" class="form-control" id="address" name="address">
+                        </div>
+                        <div class="col-12">
+                            <label for="guarantor" class="form-label fw-medium">Guarantor Name</label>
+                            <input type="text" class="form-control" id="guarantor" name="guarantor">
+                        </div>
+                        <div class="col-12">
+                            <label for="guarantor_phone" class="form-label fw-medium">Guarantor Phone</label>
+                            <input type="text" class="form-control" id="guarantor_phone" name="guarantor_phone">
+                        </div>
+                        <div class="col-12">
+                            <label for="guarantor_address" class="form-label fw-medium">Guarantor Resident</label>
+                            <input type="text" class="form-control" id="guarantor_address" name="guarantor_address">
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary rounded-pill" onclick="registerTruck()">Submit</button>
+                <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button>
+            </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-dark">
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Plate Number</th>
+                    <th scope="col">Vehicle Model</th>
+                    <th scope="col">Tonnage</th>
+                    <th scope="col">Driver Name</th>
+                    <th scope="col">Driver Phone</th>
+                    <th scope="col">Driver Resident</th>
+                    <th scope="col">Guarantor Name</th>
+                    <th scope="col">Guarantor Phone</th>
+                    <th scope="col">Guarantor Resident</th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody class="table-group-divider">
+                  {% for truck in trucks %}
+                  <tr>
+                    <th scope="row">{{ loop.index }}</th>
+                    <td>{{ truck.plate_number if truck.plate_number is not none else 'n/a'  }}</td>
+                    <td>{{ truck.vehicle_model if truck.vehicle_model is not none else 'n/a' }}</td>
+                    <td>{{ truck.tonnage if truck.tonnage is not none else 'n/a' }}</td>
+                    <td>{{ truck.driver_name if truck.driver_name is not none else 'n/a' }}</td>
+                    <td>{{ truck.phone_number if truck.phone_number is not none else 'n/a' }}</td>
+                    <td>{{ truck.address if truck.address is not none else 'n/a' }}</td>
+                    <td>{{ truck.guarantor if truck.guarantor is not none else 'n/a' }}</td>
+                    <td>{{ truck.guarantor_phone if truck.guarantor_phone is not none else 'n/a' }}</td>
+                    <td>{{ truck.guarantor_address if truck.guarantor_address is not none else 'n/a' }}</td>
+                    <td><span class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#truckUpdate{{ truck.id }}">update</span></td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+            </table>
+            {% for truck in trucks %}
+            <!-- modal for truck update -->
+            <div class="modal fade" id="truckUpdate{{ truck.id }}" tabindex="-1"  aria-labelledby="truckUpdatelabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-fullscreen-md-down modal-lg">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="truckUpdatelabel">update truck info</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <!-- truck update form -->
+                            <form class="row text-start g-3" autocomplete="on">
+                                <div class="col-12">
+                                    <div class="notice text-danger fw-semibold" style="font-family: sans-serif;"></div>
+                                    <label for="id{{truck.id}}" class="form-label fw-medium">Truck id</label>
+                                    <input type="text" class="form-control" id="id{{truck.id}}" name="id" value="{{ truck.id }}" readonly>
+                                </div>
+                                <div class="col-12">
+                                    <label for="plate_number{{truck.id}}" class="form-label fw-medium">Plate Number</label>
+                                    <input type="text" class="form-control" id="plate_number{{truck.id}}" name="plate_number">
+                                </div>
+                                <div class="col-12">
+                                    <label for="vehicle_model{{truck.id}}" class="form-label fw-medium">Vehicle Model</label>
+                                    <input type="text" class="form-control" id="vehicle_model{{truck.id}}" name="vehicle_model">
+                                </div>
+                                <div class="col-12">
+                                    <label for="tonnage{{truck.id}}" class="form-label fw-medium">Tonnage</label>
+                                    <input type="text" class="form-control" id="tonnage{{truck.id}}" name="tonnage">
+                                </div>
+                                <div class="col-12">
+                                    <label for="driver_name{{truck.id}}" class="form-label fw-medium">Driver Name</label>
+                                    <input type="text" class="form-control" id="driver_name{{truck.id}}" name="driver_name">
+                                </div>
+                                <div class="col-12">
+                                    <label for="phone_number{{truck.id}}" class="form-label fw-medium">Driver Phone</label>
+                                    <input type="text" class="form-control" id="phone_number{{truck.id}}" name="phone_number">
+                                </div>
+                                <div class="col-12">
+                                    <label for="address{{truck.id}}" class="form-label fw-medium">Driver Resident</label>
+                                    <input type="text" class="form-control" id="address{{truck.id}}" name="address">
+                                </div>
+                                <div class="col-12">
+                                    <label for="guarantor{{truck.id}}" class="form-label fw-medium">Guarantor Name</label>
+                                    <input type="text" class="form-control" id="guarantor{{truck.id}}" name="guarantor">
+                                </div>
+                                <div class="col-12">
+                                    <label for="guarantor_phone{{truck.id}}" class="form-label fw-medium">Guarantor Phone</label>
+                                    <input type="text" class="form-control" id="guarantor_phone{{truck.id}}" name="guarantor_phone">
+                                </div>
+                                <div class="col-12">
+                                    <label for="guarantor_address{{truck.id}}" class="form-label fw-medium">Guarantor Resident</label>
+                                    <input type="text" class="form-control" id="guarantor_address{{truck.id}}" name="guarantor_address">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary rounded-pill" onclick="updateTruck()">Submit</button>
+                        <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+        
+{% block scripts %}
+<script>
+    const myForm = document.getElementById('myForm');
+    const truckSearch = document.getElementById('truckSearch');
+    
+
+    function searchFilter() {
+        truckSearch.addEventListener('input', ()=>{
+            let value = truckSearch.value.toLocaleLowerCase().trim();
+
+            const rows = document.querySelectorAll('tbody tr');
+
+            rows.forEach(row => {
+                let rowPlateNumber = Array.from(row.children)[1].innerHTML.toLocaleLowerCase().trim();
+
+                if (value !== '') {
+                    if (rowPlateNumber.includes(value)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                } else {
+                    row.style.display = '';
+                }
+            });
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () =>{
+        searchFilter();
+    });
+
+
+    async function registerTruck() {
+        document.getElementById('opaque').classList.remove('d-none');
+        const registrationInput = myForm.querySelectorAll('input');
+
+        const requiredInput = Array.from(registrationInput).filter(input => input.hasAttribute('required'));
+
+        const requiredInputValues = requiredInput.map(input => input.value).filter(value => value !== '');
+
+        if (requiredInput.length !== requiredInputValues.length) {
+            document.getElementById('notice').innerHTML = 'Ensure all fields marked * are filled before submitting.';
+            document.getElementById('opaque').classList.add('d-none');
+            return;
+        } else {
+            document.getElementById('notice').innerHTML = '';
+        }
+
+        let data = {};
+        registrationInput.forEach(input => {
+            data[input.name] = input.value? input.value.toLocaleLowerCase().trim() : null;
+        });
+        
+        const url = "/truck-registration";
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers : {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                document.getElementById('notice').innerHTML = errorData.detail;
+                document.getElementById('opaque').classList.add('d-none');
+                return;
+            }
+
+            const result = await response.json();
+            window.location.reload();
+
+        } catch (error) {
+            document.getElementById('opaque').classList.add('d-none');
+            console.log(error);
+        }
+    }
+
+    async function updateTruck() {
+        document.getElementById('opaque').classList.remove('d-none');
+
+        const modal = document.querySelector('.modal.fade.show');
+        const updateInput = modal.querySelectorAll('input');
+        const notice = modal.querySelector('.notice');
+
+        let data = {};
+
+        updateInput.forEach(input => {
+            data[input.name] = input.value ? input.value.toLocaleLowerCase().trim() : null
+        });
+
+        const url = "/truck-update";
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers : {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                notice.innerHTML = errorData.detail;
+                document.getElementById('opaque').classList.add('d-none');
+                return;
+            }
+
+            const result = await response.json();
+            window.location.reload();
+
+        } catch (error) {
+            document.getElementById('opaque').classList.add('d-none');
+            console.log(error);
+        }
+    }
+</script>
+{% endblock %}

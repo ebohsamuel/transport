@@ -3,15 +3,26 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from transport_app.schemas import schemas_user
 from transport_app.crud import crud_user
 from fastapi import Depends, APIRouter, Request, HTTPException
-from transport_app.user_authentication import get_db, check_manager, template
+from transport_app.user_authentication import get_db, check_manager, template, get_current_active_user
 
 router = APIRouter(dependencies=[Depends(check_manager)])
 
 
 @router.get("/users")
-async def user_list(request: Request, db: AsyncSession = Depends(get_db)):
+async def user_list(
+        request: Request,
+        db: AsyncSession = Depends(get_db),
+        user: schemas_user.User = Depends(get_current_active_user)
+):
     users = await crud_user.get_users(db)
-    return template.TemplateResponse("user-list.html", {"request": request, "users": users})
+    return template.TemplateResponse(
+        "user-list.html",
+        {
+            "request": request,
+            "users": users,
+            "full_name": user.full_name
+        }
+    )
 
 
 @router.post("/user-registration")

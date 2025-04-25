@@ -2,6 +2,7 @@ from fastapi.responses import HTMLResponse
 from fastapi import Request, APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from transport_app.schemas import schemas_user
 from transport_app.user_authentication import template, get_db, get_current_active_user
 from transport_app.crud import crud_truck, crud_expense, crud_trip
 
@@ -9,8 +10,11 @@ router = APIRouter(dependencies=[Depends(get_current_active_user)])
 
 
 @router.get("/dashboard", response_class=HTMLResponse)
-async def dashboard_page(request: Request, db:AsyncSession = Depends(get_db)):
-    return template.TemplateResponse("dashboard.html", {"request": request})
+async def dashboard_page(
+        request: Request,
+        user: schemas_user.User = Depends(get_current_active_user)
+):
+    return template.TemplateResponse("dashboard.html", {"request": request, "full_name": user.full_name})
 
 
 @router.get("/dashboard-report")

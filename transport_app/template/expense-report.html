@@ -1,257 +1,329 @@
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <title>Document</title>
-</head>
-<body>
-    {% include "navbar.html" %}
-    <div class="container-fluid">
-        <div class="row g-5 pt-3">
-            <div class="col-12 fs-1 text-center text-success" style="font-family: sans-serif; font-weight: 900;">
-                <span>{{ plate_number }} expense report</span>
+{% extends "dashboard.html" %}
+
+{% block title %} Expense Report {% endblock %}
+
+{% block content %}
+<div class="container-fluid position-relative">
+    <div class="row g-4 dashboardRow">
+        <div class="col-12 col-md-7">
+            <div class="btn-group" role="group" aria-label="Basic example" style="width: 100%;">
+                <button type="button" id="pdf" class="btn btn-secondary">PDF</button>
+                <button type="button" id="excel" class="btn btn-success">EXCEL</button>
+                <button type="button" id="filter" class="btn btn-info"><i class="bi bi-filter fs-4"></i></button>
             </div>
-            <div class="col-12 col-md-6">
-                <div class="row g-4">
-                    <div class="col-12 d-flex flex-column flex-md-row align-items-start">
-                        <a id="pdfButton" class="btn btn-outline-success mb-2 mb-md-0 me-0 me-md-2" style="width: 150px;">PDF</a>
-                        <span class="text-danger fs-5 fw-bold" style="display: inline-block; width: auto;" data-bs-toggle="popover" role="button" data-bs-trigger="focus" data-bs-placement="right" tabindex="0" title="Tip for Printing Without Date Filters" data-bs-content="To print using the search bar option without date filters, leave both the start date and end date fields empty.">
-                            !
-                        </span>
-                    </div>
-                    <div class="col-12">
-                        <div class="row text-success" style="font-family: sans-serif; font-weight: 700;">
-                            <div class="col-12 col-md-auto">
-                                <label for="startDate" class="col-form-label">Start Date</label>
-                            </div>
-                            <div class="col-12 col-md-auto">
-                                <input type="date" id="startDate" class="form-control">
-                            </div>
-                            <div class="col-12 col-md-auto">
-                                <label for="endDate" class="col-form-label">End Date</label>
-                            </div>
-                            <div class="col-12 col-md-auto">
-                                <input type="date" id="endDate" class="form-control">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="row g-2">
-                            <div class="col-12 col-md-6">
-                                <input type="text" id="searchInput" class="form-control border border-1 border-success" placeholder="Search" aria-label="Search">
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <input type="text" id="searchInput2" class="form-control border border-1 border-success" placeholder="Search" aria-label="Search">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-12 col-md-6">
-                <div class="row g-3 text-success" style="font-family: sans-serif; font-weight: 700;">
-                    <div class="col-12">
-                        <div class="row">
-                            <div class="col-8 col-md-4">
-                                <span>Total Expenses Amount</span>
-                            </div>
-                            <div id="totalExpenses" class="col-auto border rounded border-success border-2">0</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-12">
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead class="table-dark">
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Date of Expense</th>
-                                <th scope="col">Driver Name</th>
-                                <th scope="col">Description</th>
-                                <th scope="col">Expense Amount</th>
-                                <th scope="col"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for expense in driver_expenses %}
-                            <tr>
-                                <th scope="row">{{ loop.index }}</th>
-                                <td>{{ expense.date }}</td>
-                                <td>{{ expense.driver_name }}</td>
-                                <td>{{ expense.description }}</td>
-                                <td>{{ expense.amount }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>    
         </div>
-        <div class="d-none" id="plateNumber">{{ plate_number }}</div>
+        <div class="col-md-6">
+            <div class="row mb-3">
+                <label for="startDate" class="col-sm-3 col-form-label" style="font-weight: 600;">Start Date</label>
+                <div class="col-sm-9 d-flex align-items-center">
+                  <input type="date" class="form-control" id="startDate">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="row mb-3">
+                <label for="endDate" class="col-sm-3 col-form-label" style="font-weight: 600;">End Date</label>
+                <div class="col-sm-9 d-flex align-items-center">
+                  <input type="date" class="form-control" id="endDate">
+                </div>
+            </div>
+        </div>
+        <div class="col-12 d-flex flex-row">
+            <span class="me-2 text-success fw-semibold d-flex align-items-center">Expense Amount</span><div id="expense_amount" class="text-success fw-bold d-flex align-items-center" style="width: fit-content;">0</div>
+        </div>
+        <div class="col-12 col-md-6">
+            <input style="width: 100%;" id="dateSearch" type="text" class="form-control" placeholder="Date" aria-label="Date">
+        </div>
+        <div class="col-12 col-md-6">
+            <input style="width: 100%;" id="truckSearch" type="text" class="form-control" placeholder="Truck No" aria-label="Truck No">
+        </div>
+        <div class="col-12">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Date of Expense</th>
+                        <th scope="col">Plate Number</th>
+                        <th scope="col">Driver Name</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Expense Amount</th>                        
+                        </tr>
+                    </thead>
+                    <tbody class="table-group-divider">
+                        {% for expense in expenses %}
+                        <tr>
+                            <th scope="row">{{ loop.index }}</th>
+                            <td>{{ expense.date if expense.date is not none else 'n/a'  }}</td>
+                            <td>{{ expense.truck.plate_number if expense.truck.plate_number is not none else 'n/a' }}</td>
+                            <td>{{ expense.driver_name if expense.driver_name is not none else 'n/a' }}</td>
+                            <td>{{ expense.description if expense.description is not none else 'n/a' }}</td>
+                            <td>{{ "{:,.0f}".format(expense.amount) if expense.amount is not none else 'n/a' }}</td>                                  
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
-    <script>
-        const searchInput = document.getElementById('searchInput');
-        const searchInput2 = document.getElementById('searchInput2');
-        const bodyRows = document.querySelectorAll('tbody tr');
-        const headRow = document.querySelector('thead tr');
-        const totalExpenses = document.getElementById('totalExpenses');
-        const plateNumber = document.getElementById('plateNumber');
+</div>
+{% endblock %}
 
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+    const startDate = document.getElementById('startDate');
+    const endDate = document.getElementById('endDate');
+    const expense = document.getElementById('expense_amount');
+    const truckSearch = document.getElementById('truckSearch');
+    const dateSearch = document.getElementById('dateSearch');
+    const filter = document.getElementById('filter');
 
-       
-        const popoverTriggerEl = document.querySelector('[data-bs-toggle="popover"]');
-        const popover = new bootstrap.Popover(popoverTriggerEl);
+    function exportToExcel() {
+        document.getElementById('excel').addEventListener('click', () => {
+            const headRow = document.querySelector('thead tr');
+            const bodyRows = document.querySelectorAll('tbody tr');
 
-        const pdfButton = document.getElementById('pdfButton');
+            let columns = Array.from(headRow.children).map(th => th.innerText.trim());
+            let data = [];
 
-        const startDate = document.getElementById('startDate');
-        const endDate = document.getElementById('endDate');
-
-
-        searchInput.addEventListener('input', function () {
-            
-            let value1 = searchInput.value.toLowerCase();
-            let value2 = searchInput2.value.toLowerCase();
-            activateSearch(value1,value2)           
-        });
-        searchInput2.addEventListener('input', function () {
-            
-            let value1 = searchInput.value.toLowerCase();
-            let value2 = searchInput2.value.toLowerCase();
-            activateSearch(value1,value2)           
-        });
-
-
-        function activateSearch(value1, value2) { //value1 and value2 are arrays is an array
-            let expense = 0;
-
-            bodyRows.forEach(function(row) {
-
-                const rowContent = Array.from(row.children).map(td => td.innerHTML.toLocaleLowerCase()).join(' ');
-
-                if (value1 ==='' && value2 !== '') {
-                   if (rowContent.includes(value2)) {
-                        row.style.display = '';
-
-                        const rowArray = Array.from(row.children);
-                        expense += parseInt(rowArray[4].innerHTML,10) || 0;
-                   } else {
-                        row.style.display = 'none';
-                   } 
-                } else if (value1 !=='' && value2 === '') {
-                    if (rowContent.includes(value1)) {
-                        row.style.display = '';
-
-                        const rowArray = Array.from(row.children);
-                        expense += parseInt(rowArray[4].innerHTML,10) || 0;
-                   } else {
-                        row.style.display = 'none';
-                   } 
-                    
-                } else if (value1 !=='' && value2 !== '') {
-                    if (rowContent.includes(value1) && rowContent.includes(value2)) {
-                        row.style.display = '';
-
-                        const rowArray = Array.from(row.children);
-                        expense += parseInt(rowArray[4].innerHTML,10) || 0;
-                   } else {
-                        row.style.display = 'none';
-                   } 
-                } else if (value1 ==='' && value2 === '') {
-                    row.style.display = '';
-                    
-                    const rowArray = Array.from(row.children);
-                    expense += parseInt(rowArray[4].innerHTML,10) || 0;
-                }
-            });
-            totalExpenses.innerHTML = expense;
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            let expense = 0;
+            let trip_amount = 0, diesel_amount = 0, dispatch_amount = 0, bonus_amount = 0;
 
             bodyRows.forEach(row => {
+                if (row.style.display === 'none') return;
 
                 const rowArray = Array.from(row.children);
 
-                expense += parseInt(rowArray[4].innerHTML,10) || 0;
-
+                data.push(rowArray.map(td => td.innerText.trim()));
             });
 
-            totalExpenses.innerHTML = expense;
-        });
+            const worksheet = XLSX.utils.aoa_to_sheet([columns, ...data]);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet);
 
-        pdfButton.addEventListener('click', function() {
+            XLSX.writeFile(workbook, "expenses.xlsx");
+        });
+    }
+
+
+
+    function exportToPDF() {
+        document.getElementById('pdf').addEventListener('click', () => {
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF({ orientation: 'landscape' });
+            const headRow = document.querySelector('thead tr');
+            const bodyRows = document.querySelectorAll('tbody tr');
 
-            let columns = Array.from(headRow.children).map(th => th.innerHTML);
+            let columns = Array.from(headRow.children).map(th => th.innerHTML.trim());
             let data = [];
 
-            if (startDate.value === '' && endDate.value !== '') {
+            let expense_amount = 0;
 
-                alert('ensure that both date fields are either filled or empty');
-                startDate.focus();
-                return;
+            bodyRows.forEach(row => {
+                if (row.style.display === 'none') return; // Skip hidden rows
 
-            }else if (startDate.value !== '' && endDate.value === '') {
+                const rowArray = Array.from(row.children);
+                expense_amount += parseFloat(rowArray[5].innerHTML.trim().replace(/,/g, ""),0) || 0;
+            });
 
-                alert('ensure that both date fields are either filled or empty');
-                endDate.focus();
-                return;
+            // Title Styling
+            pdf.setFontSize(22);
+            pdf.setTextColor(40, 40, 200);
+            pdf.setFont("helvetica", "bold");
+            pdf.text('Expenses Report Summary', 140, 30, { align: 'center' });
 
-            } else if (startDate.value !== '' && endDate.value !== '') {
-                const dateFilteredBodyRows = Array.from(bodyRows).filter(row => {
-                    let expenseDate = new Date(Array.from(row.children)[1].innerHTML.trim());
-                    return expenseDate >= new Date(startDate.value) && expenseDate <= new Date(endDate.value);
-                });
-                let expense = 0;
-                dateFilteredBodyRows.forEach(row => {
-                    const rowArray = Array.from(row.children);
+            // Line separator under title
+            pdf.setDrawColor(0);
+            pdf.line(30, 35, 270, 35); // horizontal line
 
-                    expense += parseInt(rowArray[4].innerHTML,10) || 0;
-                });
-                pdf.text(`Total Expenses: ${expense}`, 10, 30);
+            // Summary Styling
+            pdf.setFontSize(12);
+            pdf.setTextColor(50, 50, 50);
+            pdf.setFont("helvetica", "bold");
 
-                Array.from(dateFilteredBodyRows).forEach(row => {
-                    let rowValue = Array.from(row.children).map(td => td.innerHTML);
-                    data.push(rowValue);
-                });
-                startDate.value = '';
-                endDate.value = '';
+            const formatCurrency = amount => amount.toLocaleString("en-US", {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2
+            });
 
-            } else if (startDate.value === '' && endDate.value === '') {
-        
-                pdf.text(`Total Expenses: ${totalExpenses.innerHTML}`, 10, 30);
+            const summary = [
+                `Expenses Amount: NGN ${formatCurrency(expense_amount)}`
+            ];
 
-                const filteredBodyRow = Array.from(bodyRows).filter(row => {
-                    return window.getComputedStyle(row).display !== 'none';
-                });
+            summary.forEach(text => {
+                pdf.text(text, 30, 50);
+            });
 
-                Array.from(filteredBodyRow).forEach(row => {
-                let rowValue = Array.from(row.children).map(td => td.innerHTML);
+            // Table Data
+            bodyRows.forEach(row => {
+                if (row.style.display === 'none') return;
+                let rowValue = Array.from(row.children).map(td => td.innerHTML.trim());
                 data.push(rowValue);
-                });                
-            }
+            });
 
-            pdf.text('total expenses report', 105, 10);
-            
+            // Table Styling
             pdf.autoTable({
                 head: [columns],
                 body: data,
-                startY: 50,
+                startY: 60,
+                headStyles: {
+                    fillColor: [40, 40, 200],
+                    textColor: 255,
+                    fontStyle: 'bold'
+                },
+                styles: {
+                    fontSize: 10,
+                    cellPadding: 3
+                }
             });
-            pdf.save(`${plateNumber.innerHTML} expense.pdf`);
 
+            pdf.save('expenses.pdf');
         });
-        
+    }
 
-    </script>
-</body>
-</html>
+
+    function enableFilterButton() {
+        if (startDate.value === '' || endDate.value === '') {
+            filter.disabled = true;
+        } else {
+            filter.disabled = false;  
+        }
+    }
+
+    filter.addEventListener('click', async ()=>{
+        const start_date = startDate.value.trim();
+        const end_date = endDate.value.trim();
+
+        document.getElementById('opaque').classList.remove('d-none');
+
+        const url = `/expense-filter?start_date=${encodeURIComponent(start_date)}&end_date=${encodeURIComponent(end_date)}`;
+
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error("unable to load trip records");
+            }
+
+            const result = await response.json();
+            
+            const bodyRecordArray = result.data;
+            createTableBodyRecord(bodyRecordArray);
+            document.getElementById('opaque').classList.add('d-none');
+
+        } catch (error) {
+            document.getElementById('opaque').classList.add('d-none');
+            alert(error);
+        }               
+
+    });
+
+    function createTableBodyRecord(bodyRecordArray) {
+        const tableBody = document.querySelector('tbody');
+        tableBody.innerHTML = '';            
+
+        let html = '';
+        Array.from(bodyRecordArray).forEach((arr, index)=>{
+            html += `
+                <tr>
+                    <th scope="row">${index + 1}</th>
+                    <td>${arr.date ?? "n/a"}</td>
+                    <td>${arr.plate_number ?? "n/a"}</td>
+                    <td>${arr.driver_name ?? "n/a"}</td>
+                    <td>${arr.description ?? "n/a"}</td>
+                    <td>${arr.amount.toLocaleString("en-US", {minimumFractionDigits: 0, maximumFractionDigits: 2}) ?? "n/a"}</td>
+                </tr>
+            `;
+        });
+        tableBody.innerHTML = html;
+        summation();
+    }
+
+    function searchFilter() {
+        truckSearch.addEventListener('input', ()=>{
+            let truck = truckSearch.value.toLocaleLowerCase().trim();
+            let date = dateSearch.value.toLocaleLowerCase().trim();
+            activateSearch(date, truck);
+        });
+
+        dateSearch.addEventListener('input', ()=>{
+            let truck = truckSearch.value.toLocaleLowerCase().trim();
+            let date = dateSearch.value.toLocaleLowerCase().trim();
+            activateSearch(date, truck);
+        });
+    }
+
+    function activateSearch(date, truck) {
+        const rows = document.querySelectorAll('tbody tr');
+
+        rows.forEach(row => {
+            let rowPlateNumber = Array.from(row.children)[2].innerHTML.toLocaleLowerCase().trim();
+            let rowDate = Array.from(row.children)[1].innerHTML.toLocaleLowerCase().trim();
+
+            if (truck !== '' && date === '') {
+                if (rowPlateNumber.includes(truck)) {
+                    row.style.display = '';
+                }else {
+                    row.style.display = 'none';
+                }  
+            }else if (truck === '' && date !== '') {
+                if (rowDate.includes(date)) {
+                    row.style.display = '';
+                }else {
+                    row.style.display = 'none';
+                }  
+            }else if (truck !== '' && date !== '') {
+                if (rowPlateNumber.includes(truck) && rowDate.includes(date)) {
+                    row.style.display = '';
+                }else {
+                    row.style.display = 'none';
+                }  
+            }else if (truck === '' && date === '') {
+                row.style.display = '';
+            }
+        });
+        summation();
+    }
+
+    function summation() {
+        const bodyRows = document.querySelectorAll('tbody tr');
+        let expense_amount = 0;
+
+        bodyRows.forEach(row => {
+            if (row.style.display === 'none') return; // Skip hidden rows
+
+            const rowArray = Array.from(row.children);
+            expense_amount += parseFloat(rowArray[5].innerHTML.trim().replace(/,/g, ""),0) || 0;
+        });
+
+        expense.innerHTML = expense_amount.toLocaleString("en-US", {minimumFractionDigits: 0, maximumFractionDigits: 2});
+    }
+
+    function setDateLimit() {
+        startDate.max = new Date().toISOString().split('T')[0];
+        endDate.max = new Date().toISOString().split("T")[0];
+
+        startDate.addEventListener('input', ()=>{
+            endDate.min = startDate.value;
+            enableFilterButton();
+        });
+        endDate.addEventListener('input', ()=>{
+            startDate.max = endDate.value || new Date().toISOString().split("T")[0];
+            let date = new Date(endDate.value);
+            date.setDate(date.getDate() - 365);
+            startDate.min = !isNaN(date)? date.toISOString().split("T")[0] : '';
+            enableFilterButton();
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        setDateLimit();
+        summation();
+        searchFilter();
+        enableFilterButton();
+        exportToPDF();
+        exportToExcel()
+    });
+</script>
+{% endblock %}

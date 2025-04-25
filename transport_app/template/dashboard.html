@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <title>{% block title %} Dashboard {% endblock %}</title>
+    <style>
+        body {
+            background-color: white;
+            color: black;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .dark-mode {
+            background-color: black;
+            color: white;
+        }
+        .navigation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100dvh;
+            width: 200px;
+            background-color: #343a40;
+            padding-top: 20px;
+            overflow-y: auto;
+            z-index: 1000;
+            transition: left 0.3s ease-in-out;
+            overflow-x: auto;
+        }
+
+        .navigation.show {
+            left: 0;
+        }
+        .navigation a {
+            text-decoration: none;
+            color: white;
+            padding: 10px 15px;
+            cursor: pointer;
+        }
+        .navigation a:hover {
+            background: #333;
+        }
+        .menu-toggle {
+            font-size: 30px;
+            position: absolute;
+            top: 15px;
+            left: 10px;
+            color: black;
+            cursor: pointer;
+            display: none;
+            height: 40px;
+            width: 40px;
+            justify-content: center;
+            align-items: center;
+            border-radius: 5px;
+            border: 3px solid black;
+        }
+        .btn-close {
+            position: absolute;
+            font-size: 15px;
+            top: 25px;
+            right: 10px;
+            cursor: pointer;
+            display: none;
+        }
+        .content {
+            margin-top: 10px;
+            margin-right: 2px;
+            margin-left: 202px;
+            overflow-x: auto;
+        }
+        .topBar {
+            height: 70px;
+            background-color: azure;
+            position: sticky; 
+            top: 0; 
+            left: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-left: 200px;
+            z-index: 1000;
+        }
+        .companyName {
+            font-size: 30px;
+            font-weight: bold;
+        }
+        @media (max-width: 768px) {
+            .companyName {
+                font-size: 30px;
+            }
+            .navigation {
+                left: -200px;
+            }
+            .topBar {
+                margin-left: 0;
+            }
+            .content {
+                margin-left: 2px;
+            }
+            .menu-toggle {
+                display: flex;
+            }
+            .btn-close {
+                display: inline;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .companyName {
+                font-size: 17px;
+            }
+        }
+        #backToTop {
+            position: fixed;
+            bottom: 100px;
+            right: 15px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s;
+            font-size: 24px;
+            z-index: 1000;
+            opacity: 0.7;
+        }
+        #backToTop:hover {
+            background-color: #555;
+        }
+        #backToBottom {
+            position: fixed;
+            bottom: 48px;
+            right: 15px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s;
+            font-size: 24px;
+            z-index: 1000;
+            opacity: 0.7;
+        }
+        #backToBottom:hover {
+            background-color: #555;
+        }
+        .user {
+            font-size: 30px;
+        }
+        .btn-group:hover {
+            background: #333;
+        }
+    </style>
+    {% block style %} 
+    <style>
+        @keyframes slideInOdd {
+            from {
+                transform: translateX(-100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        @keyframes slideInEven {
+            from {
+                transform: translateX(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        @keyframes inputSearchSlideIn {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .dashboardInputSearch {
+            animation: inputSearchSlideIn 0.8s ease-out 0.2s 1 normal forwards;
+            opacity: 0;
+        }
+
+        .dashboardRow > div:nth-child(odd) {
+            animation: slideInOdd 0.8s ease-out forwards;
+            opacity: 0;
+        }
+        .dashboardRow > div:nth-child(even) {
+            animation: slideInEven 0.8s ease-out forwards;
+            opacity: 0;
+        }
+        .dashboardRow > div {
+            animation-delay: 0.8s;
+        }
+    </style>
+    {% endblock %}
+</head>
+<body class="position-relative">
+    <button id="backToTop"><i class="bi bi-arrow-up"></i></button>
+    <button id="backToBottom"><i class="bi bi-arrow-down"></i></i></button>
+    <div id="opaque" class="position-fixed d-none bg-light" style="top: 0; left: 0; height: 100dvh; width: 100dvw; opacity: 0.3; z-index: 9999999;"></div>
+    <div class="topBar">
+        <div class="menu-toggle">☰</div>
+        <span class="companyName">Transport Management System</span>
+        <div class="d-none d-xl-flex flex-row position-absolute align-items-center" style="top: 0; right: 15px; height: inherit;">
+            <span class="me-2 fw-semibold">{{ full_name }}</span>
+            <i class="user bi bi-person-circle"></i>
+        </div>
+    </div>
+    <div class="navigation rounded-end">
+        <span class="btn-close btn-close-white"></span>
+        <div class="d-flex d-xl-none flex-row-reverse position-absolute align-items-center text-white" style="top: 5px; left: 5px;"  role="button" data-bs-toggle="collapse" data-bs-target=".multi-collapse" aria-expanded="false" aria-controls="purchase order report">
+            <span class="ms-2 fw-semibold">{{ full_name }}</span>
+            <i class="user bi bi-person-circle"></i>
+        </div>
+        <a href="/dashboard" class="fw-bold d-none d-xl-block"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        <hr class="text-white mt-5 mt-xl-0">
+        <a href="/dashboard" class="d-block d-xl-none"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        <a href="/truck-list" class="d-block"><i class="bi bi-truck"></i> Truck</a>
+        <a href="/trips" class="d-block"><i class="bi bi-geo-alt"></i> Trip</a>
+        <a href="/expenses" class="d-block"><i class="bi bi-cash-stack"></i> Expenses</a>
+
+        <a class="d-block dropdown-toggle" data-bs-toggle="collapse" href="#report" aria-expanded="false" aria-controls="report"><i class="bi bi-file-earmark-bar-graph"> </i>Report</a>
+        <div class="collapse multi-collapse" id="report">
+            <div class="card card-body text-bg-dark">
+                <ul class="ps-0">
+                    <li style="list-style: none;"><a class="dropdown-item" href="/trip-report">Trip</a></li>
+                    <li style="list-style: none;"><a class="dropdown-item"  href="/expense-report">Expenses</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <hr class="text-white">
+        <a href="/users" class="d-block"><i class="bi bi-person"></i> User</a>
+        <a href="/logout" class="d-block"><i class="bi bi-box-arrow-right"></i> Logout</a>
+
+        <hr class="text-white">
+        <span class="text-white position-relative" style="padding: 10px 15px;">
+            <i class="bi bi-moon"></i>
+            Dark Mode
+            <div class="form-check form-switch position-absolute" style="top: 55%; right: 0; transform: translate(100%,-50%);">
+                <input class="form-check-input" type="checkbox" role="switch" id="dark-mode-toggle">
+            </div>
+        </span>
+          
+    </div>
+    <!-- content -->
+    <div class="content mt-5">
+        <div class="container-fluid">
+            {% block content %}
+            <div class="row mb-5 g-3">
+                <div class="col-md-4 dashboardInputSearch">
+                    <input id="inputYear" type="text" class="form-control" placeholder="Year...">
+                    <div id="notice2" class="text-danger fw-semibold" style="font-family: sans-serif;"></div>
+                </div>
+                <div class="col-md-4 dashboardInputSearch">
+                    <select class="form-select" id="inputTruck" aria-label="Default select example">
+                        <option selected value="">Select a truck...</option>
+                    </select>
+                </div>
+                <div class="col-md-4 dashboardInputSearch">
+                    <span id="searchButton" class="btn btn-outline-secondary" style="width: 100%;">Search</span>
+                </div>
+            </div>
+            <div class="row justify-content-center justify-content-xl-between dashboardRow g-1 mb-3">
+                <div class="fw-bold rounded border border-2" style="height: 250px; max-width: 560px;">
+                    <canvas id="tripChart" style=" font-family: sans-serif;"></canvas>
+                </div>
+                <div class="fw-bold rounded border border-2" style="height: 250px; max-width: 560px;">
+                    <canvas id="expenseChart" style=" font-family: sans-serif;"></canvas>
+                </div>
+                <div class="fw-bold rounded border border-2" style="height: 250px; max-width: 560px;">
+                    <canvas id="dieselChart" style=" font-family: sans-serif;"></canvas>
+                </div>
+            </div>
+            {% endblock %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+        const navigation = document.querySelector('.navigation');
+        const menuToggle = document.querySelector('.menu-toggle');
+        const closeButton = document.querySelector('.btn-close');
+        const content = document.querySelector('.content');
+        const topBar = document.querySelector('.topBar');
+        const darkMode = document.getElementById("dark-mode-toggle");
+
+        darkMode.addEventListener('click', ()=>{
+            document.body.classList.toggle("dark-mode");
+
+            // Save preference in local storage
+            if (document.body.classList.contains("dark-mode")) {
+                document.querySelector('.topBar').style.color = 'black';
+                localStorage.setItem("darkMode", "enabled");
+            } else {
+                localStorage.setItem("darkMode", "disabled");
+            }
+        });
+
+        // Apply saved dark mode preference on page load
+        if (localStorage.getItem("darkMode") === "enabled") {
+            darkMode.checked = true;
+            document.body.classList.add("dark-mode");
+            document.querySelector('.topBar').style.color = 'black';
+        }
+
+        function navigationshow() {
+            closeButtonFunction();
+            toggleFunction();
+        }
+
+        function closeButtonFunction() {
+            closeButton.addEventListener('click', function() {
+                navigation.classList.remove('show');
+                menuToggle.style.display = 'flex';
+            });
+        }
+
+        document.addEventListener('click', (e) => {
+            if (navigation.classList.contains('show') && !navigation.contains(e.target) && !menuToggle.contains(e.target)) {
+                navigation.classList.remove('show');
+                menuToggle.style.display = 'flex';
+            }
+        });
+
+        function toggleFunction() {
+            menuToggle.addEventListener('click', function() {
+                navigation.classList.add('show');
+                menuToggle.style.display = 'none';  
+            });
+        }
+
+        // Run once when the page loads
+        document.addEventListener('DOMContentLoaded', navigationshow);
+
+        // Run whenever the window resizes
+        window.addEventListener('resize', navigationshow);
+
+        const backToTopButton = document.getElementById("backToTop");
+        const backToBottomButton = document.getElementById('backToBottom');
+
+        window.onscroll = function() {
+            if (window.scrollY > 200) {
+                backToTopButton.style.display = "flex";
+            }else {
+                backToTopButton.style.display = "none";
+            }
+            if (window.scrollY < document.documentElement.scrollHeight - window.innerHeight - 200) {
+                backToBottomButton.style.display = "flex"
+            } else {
+                backToBottomButton.style.display = "none"
+            }
+        };
+
+        backToTopButton.onclick = function() {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        };
+        backToBottomButton.onclick = function () {
+            window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" });
+        };
+    </script>
+    {% block scripts %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const inputYear = document.getElementById('inputYear');
+        const inputTruck = document.getElementById('inputTruck');
+        const searchButton = document.getElementById('searchButton');
+        let trips, expenses, monthlyTripRecord, monthlyExpensesRecord, monthlyDiselRecord;
+        let expensesBarChart, tripBarChart, dieselBarChart;
+
+        const yearPattern = /^\d{4}$/;  // YYYY
+
+        const colors = [
+            '#FF6384', // Red
+            '#36A2EB', // Blue
+            '#CC65FE', // Purple
+            '#FFCE56', // Yellow
+            '#4BC0C0', // Teal
+            '#F7464A', // Bright Red
+            '#46BFBD', // Bright Teal
+            '#FDB45C', // Bright Yellow
+            '#949FB1', // Gray-Blue
+            '#4D5360', // Dark Gray
+            '#2E7D32', // Green
+            '#D81B60'  // Pink
+        ];
+
+        const labels = ['Jan','Feb','Mar','Apr','May','June','July','Aug','Sept','Oct','Nov','Dec'];
+
+        searchButton.addEventListener('click', ()=>{
+            let year = inputYear.value.trim() ? inputYear.value.trim() : new Date().getFullYear();
+            if (!yearPattern.test(year)) {
+                document.getElementById('notice2').innerHTML = "Enter a valid date";
+                return;
+            }else {
+                document.getElementById('notice2').innerHTML = '';
+            }
+
+            loadingReportData()
+        });
+
+        function chartRecords() {
+            // getting the monthly trips amount record for the Year
+            let monthlyTripSum = Array(12).fill(0);
+            trips.forEach(trip => {
+                let month = new Date(trip.loading_date).getMonth();
+                monthlyTripSum[month] = monthlyTripSum[month] + trip.amount;
+            });
+            monthlyTripRecord  = Object.values(monthlyTripSum);
+
+
+            // getting the monthly trips diesel record for the Year
+            let monthlyDieselSum = Array(12).fill(0);
+            trips.forEach(trip => {
+                let month = new Date(trip.loading_date).getMonth();
+                monthlyDieselSum[month] = monthlyDieselSum[month] + trip.diesel_amount;
+            });
+            monthlyDiselRecord  = Object.values(monthlyDieselSum);
+            
+
+            // getting the monthly expenses amount record for the Year
+            let monthlyExpensesSum = Array(12).fill(0);
+            expenses.forEach(expense => {
+                let month = new Date(expense.date).getMonth();
+                monthlyExpensesSum[month] = monthlyExpensesSum[month] + (expense.amount || 0);
+            });
+            monthlyExpensesRecord = Object.values(monthlyExpensesSum);    
+        }
+
+        // chart function
+        function chart() {
+            let year = inputYear.value ? Number(inputYear.value) : new Date().getFullYear();
+            let truck = inputTruck.value;
+
+            // Destroy existing charts if they exist
+            if (expensesBarChart) {
+                expensesBarChart.destroy();
+            }
+            if (dieselBarChart) {
+                dieselBarChart.destroy();
+            }
+            if (tripBarChart) {
+                tripBarChart.destroy();
+            }
+
+            expensesBarChart = new Chart(expenseChart, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: monthlyExpensesRecord,
+                        backgroundColor: colors
+
+                    },],
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend:{
+                            display:false
+                        },
+                        title: {
+                            display: true,
+                            text: `${truck} ${year} expenses`
+                        }
+                    }
+                }
+            });
+        
+            dieselBarChart = new Chart(dieselChart, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: monthlyDiselRecord,
+                        backgroundColor: colors
+
+                    },],
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend:{
+                            display:false
+                        },
+                        title: {
+                            display: true,
+                            text: `${truck} ${year} diesel`
+                        }
+                    }
+                }
+            });
+
+            tripBarChart = new Chart(tripChart, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: monthlyTripRecord,
+                        backgroundColor: colors
+
+                    },],
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend:{
+                            display:false
+                        },
+                        title: {
+                            display: true,
+                            text: `${truck} ${year} transportation amount`
+                        }
+                    }
+                }
+            });
+
+        } 
+
+        async function loadingReportData() {
+            let year = inputYear.value.trim() ? inputYear.value.trim() : new Date().getFullYear();
+            let truck = inputTruck.value;
+
+            if (year === '') {
+                year = new Date().getFullYear()
+            }
+            let response;
+
+            const url = `/dashboard-report?year=${encodeURIComponent(year)}&truck=${encodeURIComponent(truck)}`;
+            response = await fetch(url);
+                            
+            try {
+                if (!response.ok) {
+                    throw new Error(`${response.statusText}`);
+                }
+                const result = await response.json();
+                trips = result.trips;
+                expenses = result.expenses;
+
+                console.log(trips);
+        
+                chartRecords();
+                chart();
+
+            } catch (error) {
+                alert(error);
+            }
+        }
+
+        async function getTruckList() {
+            const url = "/plate-number-list";
+
+            const response = await fetch(url);
+
+            try {
+                if (!response.ok) {
+                    throw new Error("Failed to load truck list.");
+                }
+                const result = await response.json();
+                plate_numbers = result.plate_numbers;
+                
+
+                Array.from(plate_numbers).forEach(plate_number => {
+                    const option = document.createElement("option");
+                    option.value = plate_number;
+                    option.textContent = plate_number;
+                    inputTruck.appendChild(option);
+                });
+
+            } catch (error) {
+                console.error(error);
+                document.getElementById('notice2').innerHTML = "Could not load truck list.";
+            }
+
+        }
+
+        document.addEventListener('DOMContentLoaded', ()=>{
+            getTruckList();
+            loadingReportData();
+        });
+    </script>
+    {% endblock %}
+</body>
+</html>

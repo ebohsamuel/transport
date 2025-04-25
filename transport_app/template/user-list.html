@@ -1,0 +1,315 @@
+{% extends "dashboard.html" %}
+
+{% block title %} User List {% endblock %}
+
+{% block content %}
+<div class="row g-3 pt-3">
+    <div class="col-12">
+        <span id="addUser" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#userregistration" style="width: 100%;">Add User <i class="bi bi-plus"></i></span>
+    </div>
+    <!-- modal for registering new user  -->
+    <div class="modal fade" id="userregistration" tabindex="-1"  aria-labelledby="userRegistrationlabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-fullscreen-md-down modal-lg">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="userRegistrationlabel">Enter New User</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <!-- user registration form -->
+                    <form id="myForm" class="row text-start g-3" autocomplete="on">
+                        <div class="col-12">
+                            <div id="notice" class="text-danger fw-semibold" style="font-family: sans-serif;"></div>
+                            <label for="email" class="form-label fw-medium">Email <span class="text-danger">*</span></label>
+                            <input type="email" name="email" class="form-control" id="email"required>
+                        </div>
+                        <div class="col-12">
+                            <label for="password" class="form-label fw-medium">Password <span class="text-danger">*</span></label>
+                            <input type="password" name="password" class="form-control" id="password" required>
+                        </div>
+                        <div class="col-12">
+                            <label for="full_name" class="form-label fw-medium">Full Name <span class="text-danger">*</span></label>
+                            <input type="text" name="full_name" class="form-control" id="full_name" required>
+                        </div>
+                        <div class="col-12">
+                            <label for="phone" class="form-label fw-medium">Phone</label>
+                            <input type="text" name="phone" class="form-control" id="phone">
+                        </div>
+                        <div class="col-12">
+                            <label for="role" class="form-label fw-medium">Role <span class="text-danger">*</span></label>
+                            <select id="role" name="role" class="form-select" required>
+                                <option value="" selected>Choose...</option>
+                                <option value="manager">Manager</option>                                   
+                                <option value="accountant">Accountant</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label for="status" class="form-label fw-medium">Status <span class="text-danger">*</span></label>
+                            <select id="status" name="status" class="form-select" required>
+                                <option value="" selected>Choose...</option>
+                                <option value="active">Active</option>                                   
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label for="address" class="form-label fw-medium">Resident</label>
+                            <input type="text" name="address" class="form-control" id="address">
+                        </div>
+                        <div class="col-12">
+                            <label for="next_of_kin" class="form-label fw-medium">Next of Kin</label>
+                            <input type="text" name="next_of_kin" class="form-control" id="next_of_kin">
+                        </div>
+                        <div class="col-12">
+                            <label for="next_of_kin_address" class="form-label fw-medium">Next of Kin Resident</label>
+                            <input type="text" name="next_of_kin_address" class="form-control" id="next_of_kin_address">
+                        </div>
+                        <div class="col-12">
+                            <label for="next_of_kin_phone" class="form-label fw-medium">Next of Kin Phone</label>
+                            <input type="text" name="next_of_kin_phone" class="form-control" id="next_of_kin_phone">
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="submitButton" class="btn btn-primary rounded-pill" onclick="registerUser()">Submit</button>
+                <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button>
+            </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-dark">
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Full Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Role</th>
+                    <th scope="col">Address</th>
+                    <th scope="col">Next of Kin</th>
+                    <th scope="col">Next of Kin Address</th>
+                    <th scope="col">Phone of Next of Kin</th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody class="table-group-divider">
+                  {% for user in users %}
+                  <tr>
+                    <th scope="row">{{ loop.index }}</th>
+                    <td>{{ user.full_name if user.full_name is not none else "n/a"  }}</td>
+                    <td>{{ user.email if user.email is not none else "n/a"  }}</td>
+                    <td>{{ user.phone if user.phone is not none else "n/a"  }}</td>
+                    <td>{{ user.status if user.status is not none else "n/a"  }}</td>
+                    <td>{{ user.role if user.role is not none else "n/a"  }}</td>
+                    <td>{{ user.address if user.address is not none else "n/a" }}</td>
+                    <td>{{ user.next_of_kin if user.next_of_kin is not none else "n/a" }}</td>
+                    <td>{{ user.next_of_kin_address if user.next_of_kin_address is not none else "n/a" }}</td>
+                    <td>{{ user.next_of_kin_phone if user.next_of_kin_phone is not none else "n/a" }}</td>
+                    <td><span class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#userUpdate{{ user.id }}">update</span></td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+            </table>
+            {% for user in users %}
+            <!-- modal for user update -->
+            <div class="modal fade" id="userUpdate{{ user.id }}" tabindex="-1"  aria-labelledby="userUpdatelabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-fullscreen-md-down modal-lg">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="userUpdatelabel">update user info</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <!-- user update form -->
+                            <form class="row text-start g-3" autocomplete="on">
+                                <div class="col-12">
+                                    <div class="notice text-danger fw-semibold" style="font-family: sans-serif;"></div>
+                                    <label for="id{{user.id}}" class="form-label fw-medium">User id</label>
+                                    <input type="text" class="form-control" id="id{{user.id}}" name="id" value="{{ user.id }}" readonly>
+                                </div>
+                                <div class="col-12">
+                                    <label for="email{{user.id}}" class="form-label fw-medium">Email</label>
+                                    <input type="email" name="email" class="form-control" id="email{{user.id}}">
+                                </div>
+                                <div class="col-12">
+                                    <label for="password{{user.id}}" class="form-label fw-medium">Password</label>
+                                    <input type="password" name="password" class="form-control" id="password{{user.id}}">
+                                </div>
+                                <div class="col-12">
+                                    <label for="full_name{{user.id}}" class="form-label fw-medium">Full Name</label>
+                                    <input type="text" name="full_name" class="form-control" id="full_name{{user.id}}">
+                                </div>
+                                <div class="col-12">
+                                    <label for="phone{{user.id}}" class="form-label fw-medium">Phone </label>
+                                    <input type="text" name="phone" class="form-control" id="phone{{user.id}}">
+                                </div>
+                                <div class="col-12">
+                                    <label for="role{{user.id}}" class="form-label fw-medium">Role</label>
+                                    <select id="role{{user.id}}" name="role" class="form-select">
+                                        <option value="" selected>Choose...</option>
+                                        <option value="manager">Manager</option>                                   
+                                        <option value="accountant">Accountant</option>
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <label for="status{{user.id}}" class="form-label fw-medium">Status</label>
+                                    <select id="status{{user.id}}" name="status" class="form-select">
+                                        <option value="" selected>Choose...</option>
+                                        <option value="active">Active</option>                                   
+                                        <option value="inactive">Inactive</option>
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <label for="address{{user.id}}" class="form-label fw-medium">Resident</label>
+                                    <input type="text" name="address" class="form-control" id="address{{user.id}}">
+                                </div>
+                                <div class="col-12">
+                                    <label for="next_of_kin{{user.id}}" class="form-label fw-medium">Next of Kin</label>
+                                    <input type="text" name="next_of_kin" class="form-control" id="next_of_kin{{user.id}}">
+                                </div>
+                                <div class="col-12">
+                                    <label for="next_of_kin_address{{user.id}}" class="form-label fw-medium">Next of Kin Resident</label>
+                                    <input type="text" name="next_of_kin_address" class="form-control" id="next_of_kin_address{{user.id}}">
+                                </div>
+                                <div class="col-12">
+                                    <label for="next_of_kin_phone{{user.id}}" class="form-label fw-medium">Next of Kin Phone</label>
+                                    <input type="text" name="next_of_kin_phone" class="form-control" id="next_of_kin_phone{{user.id}}">
+                                </div> 
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary rounded-pill" onclick="updateUser()">Submit</button>
+                        <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+        
+{% block scripts %}
+<script>
+    const myForm = document.getElementById('myForm');
+    const modals = document.querySelectorAll('.modal.fade');
+    
+    modals.forEach(modal => {
+        modal.addEventListener('shown.bs.modal', function() {
+            disableFunction();
+        })
+    });
+
+    function disableFunction() {
+        const submitButton = document.getElementById('submitButton');
+        const inputs = myForm.querySelectorAll('input[required]');
+        const selects = myForm.querySelectorAll('select');
+    
+        let selectInput = Array.from(inputs).concat(...selects);
+
+        submitButton.disabled = true;
+
+        selectInput.forEach(input => {
+            input.addEventListener('input', () => {
+                let filterInput = selectInput.map(input => input.value).filter(value => value !== '');
+
+                if (filterInput.length !== selectInput.length) {
+                    submitButton.disabled = true;
+                } else {
+                    submitButton.disabled = false; 
+                }
+            });
+        });
+    }
+    
+    
+    async function registerUser() {
+        document.getElementById('opaque').classList.remove('d-none');
+        const inputs = myForm.querySelectorAll('input');
+        const selects = myForm.querySelectorAll('select');
+
+        let selectInput = Array.from(inputs).concat(...selects);
+
+        let data = {};
+        selectInput.forEach(input => {
+            data[input.name] = input.value? input.value.toLocaleLowerCase().trim() : null;
+        });
+        
+        const url = "/user-registration";
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers : {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                document.getElementById('notice').innerHTML = errorData.detail;
+                document.getElementById('opaque').classList.add('d-none');
+                return;
+            }
+
+            const result = await response.json();
+            window.location.reload();
+
+        } catch (error) {
+            document.getElementById('opaque').classList.add('d-none');
+            console.log(error);
+        }
+    }
+
+    async function updateUser() {
+        document.getElementById('opaque').classList.remove('d-none');
+
+        const modal = document.querySelector('.modal.fade.show');
+        
+        const inputs = modal.querySelectorAll('input');
+        const selects = modal.querySelectorAll('select');
+        const notice = modal.querySelector('.notice');
+
+        let selectInput = Array.from(inputs).concat(...selects);
+
+        let data = {};
+        selectInput.forEach(input => {
+            data[input.name] = input.value? input.value.toLocaleLowerCase().trim() : null;
+        });
+        
+        const url = "/user-update";
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers : {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                notice.innerHTML = errorData.detail;
+                document.getElementById('opaque').classList.add('d-none');
+                return;
+            }
+
+            const result = await response.json();
+            window.location.reload();
+
+        } catch (error) {
+            document.getElementById('opaque').classList.add('d-none');
+            console.log(error);
+        }
+    }
+</script>
+{% endblock %}

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from transport_app.user_authentication import get_current_active_user, get_db, template
-from transport_app.schemas import schemas_expense
+from transport_app.schemas import schemas_expense, schemas_user
 from transport_app.crud import crud_expense
 
 
@@ -9,9 +9,20 @@ router = APIRouter(dependencies=[Depends(get_current_active_user)])
 
 
 @router.get("/expenses")
-async def expense_(request: Request, db: AsyncSession = Depends(get_db)):
+async def expense_(
+        request: Request,
+        db: AsyncSession = Depends(get_db),
+        user: schemas_user.User = Depends(get_current_active_user)
+):
     expenses = await crud_expense.get_expenses(db)
-    return template.TemplateResponse("expenses.html", {"request": request, "expenses": expenses})
+    return template.TemplateResponse(
+        "expenses.html",
+        {
+            "request": request,
+            "expenses": expenses,
+            "full_name": user.full_name
+        }
+    )
 
 
 @router.post("/expense-registration")
