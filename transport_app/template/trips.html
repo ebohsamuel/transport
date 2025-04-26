@@ -80,7 +80,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary rounded-pill" onclick="registerTrip()">Submit</button>
+                <button type="button" id="submitButton" class="btn btn-primary rounded-pill" onclick="registerTrip()">Submit</button>
                 <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button>
             </div>
             </div>
@@ -216,6 +216,26 @@
     const myForm = document.getElementById('myForm');
     const truckSearch = document.getElementById('truckSearch');
     const dateSearch = document.getElementById('dateSearch');
+    const submitButton = document.getElementById('submitButton');
+    const inputs = myForm.querySelectorAll('input[required]');
+    const select = myForm.querySelector('select');
+    let selectInput = Array.from(inputs).concat(select);
+
+
+    submitButton.disabled = true;
+
+    function disableState() {
+        let filterInput = selectInput.map(input => input.value).filter(value => value !== '');
+        console.log(filterInput);
+        submitButton.disabled = (filterInput.length !== selectInput.length);
+    }
+
+    function disableFunction() {  
+        selectInput.forEach(input => {
+            input.addEventListener('input', disableState);
+        });
+    }
+    
 
 
     document.addEventListener('DOMContentLoaded', ()=> {
@@ -225,28 +245,6 @@
     async function registerTrip() {
         document.getElementById('opaque').classList.remove('d-none');
         const registrationInput = myForm.querySelectorAll('input');
-
-        const selectInput = myForm.querySelector('select');
-
-        if (selectInput.value === '') {
-            document.getElementById('notice').innerHTML = 'Ensure all fields marked * are filled before submitting.';
-            document.getElementById('opaque').classList.add('d-none');
-            return;
-        } else {
-            document.getElementById('notice').innerHTML = '';
-        }
-
-        const requiredInput = Array.from(registrationInput).filter(input => input.hasAttribute('required'));
-
-        const requiredInputValues = requiredInput.map(input => input.value).filter(value => value !== '');
-
-        if (requiredInput.length !== requiredInputValues.length) {
-            document.getElementById('notice').innerHTML = 'Ensure all fields marked * are filled before submitting.';
-            document.getElementById('opaque').classList.add('d-none');
-            return;
-        } else {
-            document.getElementById('notice').innerHTML = '';
-        }
 
         let data = {};
         registrationInput.forEach(input => {
@@ -378,6 +376,7 @@
 
             getTruckList(modal);
             getTruckInfo(modal);
+            disableFunction();
         })
     });
 
@@ -402,6 +401,7 @@
                 option.textContent = plate_number;
                 truck.appendChild(option);
             });
+            disableState();
 
         } catch (error) {
             console.error(error);
@@ -435,7 +435,8 @@
                 const result = await response.json();
                 truckId.value = result.truck_id;
                 driverName.value = result.driver_name;
-                
+
+                disableState();            
 
             } catch (error) {
                 console.error(error);

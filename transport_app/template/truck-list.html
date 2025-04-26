@@ -28,8 +28,8 @@
                             <input type="text" class="form-control" id="plate_number" name="plate_number" required>
                         </div>
                         <div class="col-12">
-                            <label for="vehicle_model" class="form-label fw-medium">Vehicle Model</label>
-                            <input type="text" class="form-control" id="vehicle_model" name="vehicle_model">
+                            <label for="vehicle_model" class="form-label fw-medium">Vehicle Model <span class="text-danger fw-bold">*</span></label>
+                            <input type="text" class="form-control" id="vehicle_model" name="vehicle_model" required>
                         </div>
                         <div class="col-12">
                             <label for="tonnage" class="form-label fw-medium">Tonnage <span class="text-danger fw-bold">*</span></label>
@@ -63,7 +63,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary rounded-pill" onclick="registerTruck()">Submit</button>
+                <button type="button" id="submitButton" class="btn btn-primary rounded-pill" onclick="registerTruck()">Submit</button>
                 <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button>
             </div>
             </div>
@@ -179,6 +179,27 @@
 <script>
     const myForm = document.getElementById('myForm');
     const truckSearch = document.getElementById('truckSearch');
+    const modal_ = document.querySelector('#truckregistration');
+    const submitButton = document.getElementById('submitButton');
+
+    submitButton.disabled = true;    
+    
+    
+    modal_.addEventListener('shown.bs.modal', function() {
+        disableFunction();
+    })
+
+
+    function disableFunction() {
+        const inputs = myForm.querySelectorAll('input[required]');
+
+        inputs.forEach(input => {
+            input.addEventListener('input', () => {
+                let filterInput = Array.from(inputs).map(input => input.value).filter(value => value !== '');
+                submitButton.disabled = (filterInput.length !== inputs.length);
+            });
+        });
+    }
     
 
     function searchFilter() {
@@ -211,18 +232,6 @@
     async function registerTruck() {
         document.getElementById('opaque').classList.remove('d-none');
         const registrationInput = myForm.querySelectorAll('input');
-
-        const requiredInput = Array.from(registrationInput).filter(input => input.hasAttribute('required'));
-
-        const requiredInputValues = requiredInput.map(input => input.value).filter(value => value !== '');
-
-        if (requiredInput.length !== requiredInputValues.length) {
-            document.getElementById('notice').innerHTML = 'Ensure all fields marked * are filled before submitting.';
-            document.getElementById('opaque').classList.add('d-none');
-            return;
-        } else {
-            document.getElementById('notice').innerHTML = '';
-        }
 
         let data = {};
         registrationInput.forEach(input => {

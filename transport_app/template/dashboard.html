@@ -240,22 +240,22 @@
         <a href="/dashboard" class="fw-bold d-none d-xl-block"><i class="bi bi-speedometer2"></i> Dashboard</a>
         <hr class="text-white mt-5 mt-xl-0">
         <a href="/dashboard" class="d-block d-xl-none"><i class="bi bi-speedometer2"></i> Dashboard</a>
-        <a href="/truck-list" class="d-block"><i class="bi bi-truck"></i> Truck</a>
-        <a href="/trips" class="d-block"><i class="bi bi-geo-alt"></i> Trip</a>
+        <a href="/truck-list" class="d-block"><i class="bi bi-truck"></i> Trucks</a>
+        <a href="/trips" class="d-block"><i class="bi bi-geo-alt"></i> Trips</a>
         <a href="/expenses" class="d-block"><i class="bi bi-cash-stack"></i> Expenses</a>
 
         <a class="d-block dropdown-toggle" data-bs-toggle="collapse" href="#report" aria-expanded="false" aria-controls="report"><i class="bi bi-file-earmark-bar-graph"> </i>Report</a>
         <div class="collapse multi-collapse" id="report">
             <div class="card card-body text-bg-dark">
                 <ul class="ps-0">
-                    <li style="list-style: none;"><a class="dropdown-item" href="/trip-report">Trip</a></li>
+                    <li style="list-style: none;"><a class="dropdown-item" href="/trip-report">Trips</a></li>
                     <li style="list-style: none;"><a class="dropdown-item"  href="/expense-report">Expenses</a></li>
                 </ul>
             </div>
         </div>
 
         <hr class="text-white">
-        <a href="/users" class="d-block"><i class="bi bi-person"></i> User</a>
+        <a href="/users" class="d-block"><i class="bi bi-person"></i> Users</a>
         <a href="/logout" class="d-block"><i class="bi bi-box-arrow-right"></i> Logout</a>
 
         <hr class="text-white">
@@ -561,8 +561,6 @@
                 const result = await response.json();
                 trips = result.trips;
                 expenses = result.expenses;
-
-                console.log(trips);
         
                 chartRecords();
                 chart();

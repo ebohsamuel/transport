@@ -34,18 +34,18 @@
                             <input type="number" name="amount" class="form-control" id="amount">
                         </div>
                         <div class="col-12">
-                            <label for="plate_number" class="form-label fw-medium">Plate Number</label>
-                            <select class="form-select" id="plate_number" name="plate_number">
+                            <label for="plate_number" class="form-label fw-medium">Plate Number <span class="text-danger fw-bold">*</span></label>
+                            <select class="form-select" id="plate_number" name="plate_number" required>
                                 <option selected value="">Select Plate Number...</option>
                             </select>
                         </div>
                         <div class="col-12">
                             <label for="truck_id" class="form-label fw-medium">Truck Id</label>
-                            <input type="text" name="truck_id" class="form-control" id="truck_id" readonly>
+                            <input type="text" name="truck_id" class="form-control" id="truck_id" readonly required>
                         </div>
                         <div class="col-12">
                             <label for="driver_name" class="form-label fw-medium">Driver Name</label>
-                            <input type="text" name="driver_name" class="form-control" id="driver_name" readonly>
+                            <input type="text" name="driver_name" class="form-control" id="driver_name" readonly required>
                         </div>
                         <div class="col-12">
                             <label for="description" class="form-label fw-medium">Description</label>
@@ -154,6 +154,13 @@
     const myForm = document.getElementById('myForm');
     const truckSearch = document.getElementById('truckSearch');
     const dateSearch = document.getElementById('dateSearch');
+    const submitButton = document.getElementById('submitButton');
+    let inputs = myForm.querySelectorAll('input[required]');
+    const select = myForm.querySelector('select');
+    let selectInput = Array.from(inputs).concat(select);
+
+
+    submitButton.disabled = true;
 
 
     document.addEventListener('DOMContentLoaded', ()=> {
@@ -294,25 +301,14 @@
         })
     });
 
+    function disableState() {
+        let filterInput = selectInput.map(input => input.value).filter(value => value !== '');
+        submitButton.disabled = (filterInput.length !== selectInput.length);
+    }
+
     function disableFunction() {
-        const submitButton = document.getElementById('submitButton');
-        let inputs = myForm.querySelectorAll('input:not([readonly])');
-        const selectInput = myForm.querySelector('select');
-        const textArea = myForm.querySelector('textarea');
-        let arrayInputs = Array.from(inputs).concat([textArea,selectInput]);
-
-        submitButton.disabled = true;
-
-        arrayInputs.forEach(input => {
-            input.addEventListener('input', () => {
-                let filterInput = arrayInputs.map(input => input.value).filter(value => value !== '');
-
-                if (filterInput.length < 2) {
-                    submitButton.disabled = true;
-                } else {
-                    submitButton.disabled = false; 
-                }
-            });
+        selectInput.forEach(input => {
+            input.addEventListener('input',disableState);
         });
     }
 
@@ -337,6 +333,7 @@
                 option.textContent = plate_number;
                 truck.appendChild(option);
             });
+            disableState();
 
         } catch (error) {
             console.error(error);
@@ -369,8 +366,9 @@
                 }
                 const result = await response.json();
                 truckId.value = result.truck_id;
-                driverName.value = result.driver_name;
+                driverName.value = result.driver_name; 
                 
+                disableState();
 
             } catch (error) {
                 console.error(error);

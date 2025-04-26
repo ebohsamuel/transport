@@ -200,6 +200,9 @@
 <script>
     const myForm = document.getElementById('myForm');
     const modals = document.querySelectorAll('.modal.fade');
+    const submitButton = document.getElementById('submitButton');
+
+    submitButton.disabled = true;
     
     modals.forEach(modal => {
         modal.addEventListener('shown.bs.modal', function() {
@@ -208,13 +211,10 @@
     });
 
     function disableFunction() {
-        const submitButton = document.getElementById('submitButton');
         const inputs = myForm.querySelectorAll('input[required]');
         const selects = myForm.querySelectorAll('select');
     
         let selectInput = Array.from(inputs).concat(...selects);
-
-        submitButton.disabled = true;
 
         selectInput.forEach(input => {
             input.addEventListener('input', () => {
