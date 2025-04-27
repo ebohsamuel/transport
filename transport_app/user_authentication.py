@@ -8,6 +8,7 @@ from transport_app import database
 from transport_app.crud import crud_user
 from transport_app.schemas import schemas_user, schemas_token
 from fastapi.templating import Jinja2Templates
+from fastapi.responses import RedirectResponse
 import os
 
 template = Jinja2Templates(directory="transport_app/template")
@@ -20,6 +21,11 @@ ALGORITHM = "HS256"
 async def get_db():
     async with database.async_SessionLocal() as session:
         yield session
+
+
+class NotAuthenticatedException(HTTPException):
+    def __init__(self):
+        super().__init__(status_code=401, detail="Not authenticated")
 
 
 async def authenticate_user(db: AsyncSession, email: str, password: str):
@@ -42,12 +48,14 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     return encoded_jwt
 
 
-async def get_current_user(access_token: str = Cookie(), db: AsyncSession = Depends(get_db)):
+async def get_current_user(access_token: str | None = Cookie(default=None), db: AsyncSession = Depends(get_db)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
+    if access_token is None:
+        raise NotAuthenticatedException()
 
     token = access_token[len("Bearer "):]
 
@@ -55,11 +63,14 @@ async def get_current_user(access_token: str = Cookie(), db: AsyncSession = Depe
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")
         if email is None:
+            print(1)
             raise credentials_exception
         token_data = schemas_token.TokenData(username=email)
     except ExpiredSignatureError:
+        print(2)
         raise credentials_exception
     except InvalidTokenError:
+        print(3)
         raise credentials_exception
     user_data = await crud_user.get_user_by_email(db, email=token_data.username)
     if user_data is None:

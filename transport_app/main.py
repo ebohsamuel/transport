@@ -1,9 +1,10 @@
 from fastapi import FastAPI, Request
 import os
+from starlette.responses import RedirectResponse
 from transport_app.crud import crud_user
 from transport_app.schemas import schemas_user
 from transport_app.database import async_engine, Base
-from transport_app.user_authentication import template, get_db
+from transport_app.user_authentication import template, get_db, NotAuthenticatedException
 from transport_app.router import login, dashboard, user_registration_and_update, logout, truck_registration_and_update
 from transport_app.router import trip_registration_and_update, expense_registration_and_update
 from transport_app.router import trip_report, expense_report
@@ -53,3 +54,8 @@ async def on_startup():
 @app.get("/")
 async def read_index(request: Request):
     return template.TemplateResponse("login.html", {"request": request})
+
+
+@app.exception_handler(NotAuthenticatedException)
+async def not_authenticated_exception_handler(request: Request, exc: NotAuthenticatedException):
+    return RedirectResponse(url="/")
