@@ -7,9 +7,9 @@ from transport_app import model
 from transport_app.schemas import schemas_user
 
 
-scheme = "bcrypt"
+scheme = os.getenv("scheme")
 
-pwd_context = CryptContext(schemes=(scheme), deprecated="auto")
+pwd_context = CryptContext(schemes=scheme, deprecated="auto")
 
 
 async def create_user(db: AsyncSession, user: schemas_user.UserCreate):

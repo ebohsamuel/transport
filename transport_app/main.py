@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
 import os
 from starlette.responses import RedirectResponse
 from transport_app.crud import crud_user
@@ -22,10 +22,10 @@ app.include_router(expense_registration_and_update.router)
 app.include_router(trip_report.router)
 app.include_router(expense_report.router)
 
-admin_email = "eng1102493@gmail.com"
-admin_password = "24bennSOO"
-role = "manager"
-status = "active"
+admin_email = os.getenv("admin_email")
+admin_password = os.getenv("admin_password")
+role = os.getenv("role")
+status = os.getenv("status")
 
 
 @app.on_event("startup")
@@ -59,3 +59,13 @@ async def read_index(request: Request):
 @app.exception_handler(NotAuthenticatedException)
 async def not_authenticated_exception_handler(request: Request, exc: NotAuthenticatedException):
     return RedirectResponse(url="/")
+
+
+@app.get("/uptime")
+async def check_status():
+    return {"status": "ok"}
+
+
+@app.head("/uptime")
+def head_uptime():
+    return Response(headers={"X-Status": "ok"})

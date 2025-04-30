@@ -8,14 +8,13 @@ from transport_app import database
 from transport_app.crud import crud_user
 from transport_app.schemas import schemas_user, schemas_token
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import RedirectResponse
 import os
 
 template = Jinja2Templates(directory="transport_app/template")
 
 
-SECRET_KEY = "ec74be764e3ff9ca044d6b13094bbcfad3c70e190410c01c233b0428a5ce67a5"
-ALGORITHM = "HS256"
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM")
 
 
 async def get_db():
