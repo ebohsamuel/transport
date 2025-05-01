@@ -296,6 +296,12 @@
                 <div class="fw-bold rounded border border-2" style="height: 250px; max-width: 560px;">
                     <canvas id="dieselChart" style=" font-family: sans-serif;"></canvas>
                 </div>
+                <div class="fw-bold rounded border border-2" style="height: 250px; max-width: 560px;">
+                    <canvas id="bonusChart" style=" font-family: sans-serif;"></canvas>
+                </div>
+                <div class="fw-bold rounded border border-2" style="height: 250px; max-width: 560px;">
+                    <canvas id="dispatchChart" style=" font-family: sans-serif;"></canvas>
+                </div>
             </div>
             {% endblock %}
         </div>
@@ -390,8 +396,8 @@
         const inputYear = document.getElementById('inputYear');
         const inputTruck = document.getElementById('inputTruck');
         const searchButton = document.getElementById('searchButton');
-        let trips, expenses, monthlyTripRecord, monthlyExpensesRecord, monthlyDiselRecord;
-        let expensesBarChart, tripBarChart, dieselBarChart;
+        let trips, expenses, monthlyTripRecord, monthlyExpensesRecord, monthlyDiselRecord, monthlyBonusRecord, monthlyDispatchRecord;
+        let expensesBarChart, tripBarChart, dieselBarChart, bonusBarChart, dispatchBarChart;
 
         const yearPattern = /^\d{4}$/;  // YYYY
 
@@ -441,6 +447,22 @@
                 monthlyDieselSum[month] = monthlyDieselSum[month] + trip.diesel_amount;
             });
             monthlyDiselRecord  = Object.values(monthlyDieselSum);
+
+            // getting the monthly trips bonus record for the Year
+            let monthlyBonusSum = Array(12).fill(0);
+            trips.forEach(trip => {
+                let month = new Date(trip.loading_date).getMonth();
+                monthlyBonusSum[month] = monthlyBonusSum[month] + trip.bonus;
+            });
+            monthlyBonusRecord  = Object.values(monthlyBonusSum);
+
+            // getting the monthly trips dispatch record for the Year
+            let monthlyDispatchSum = Array(12).fill(0);
+            trips.forEach(trip => {
+                let month = new Date(trip.loading_date).getMonth();
+                monthlyDispatchSum[month] = monthlyDispatchSum[month] + trip.dispatch;
+            });
+            monthlyDispatchRecord  = Object.values(monthlyDispatchSum);
             
 
             // getting the monthly expenses amount record for the Year
@@ -466,6 +488,12 @@
             }
             if (tripBarChart) {
                 tripBarChart.destroy();
+            }
+            if (bonusBarChart) {
+                bonusBarChart.destroy();
+            }
+            if (dispatchBarChart) {
+                dispatchBarChart.destroy();
             }
 
             expensesBarChart = new Chart(expenseChart, {
@@ -534,7 +562,55 @@
                         },
                         title: {
                             display: true,
-                            text: `${truck} ${year} transportation amount`
+                            text: `${truck} ${year} transportation`
+                        }
+                    }
+                }
+            });
+
+            dispatchBarChart = new Chart(dispatchChart, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: monthlyDispatchRecord,
+                        backgroundColor: colors
+
+                    },],
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend:{
+                            display:false
+                        },
+                        title: {
+                            display: true,
+                            text: `${truck} ${year} dispatch`
+                        }
+                    }
+                }
+            });
+
+            bonusBarChart = new Chart(bonusChart, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: monthlyBonusRecord,
+                        backgroundColor: colors
+
+                    },],
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend:{
+                            display:false
+                        },
+                        title: {
+                            display: true,
+                            text: `${truck} ${year} bonus`
                         }
                     }
                 }
