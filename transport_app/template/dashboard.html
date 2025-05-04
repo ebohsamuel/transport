@@ -278,9 +278,10 @@
                     <div id="notice2" class="text-danger fw-semibold" style="font-family: sans-serif;"></div>
                 </div>
                 <div class="col-md-4 dashboardInputSearch">
-                    <select class="form-select" id="inputTruck" aria-label="Default select example">
-                        <option selected value="">Select a truck...</option>
-                    </select>
+                    <input class="form-control" list="truckList" id="inputTruck" placeholder="Select a truck...">
+                    <datalist id="truckList">
+                        <!-- Options will be populated dynamically -->
+                    </datalist>
                 </div>
                 <div class="col-md-4 dashboardInputSearch">
                     <span id="searchButton" class="btn btn-outline-secondary" style="width: 100%;">Search</span>
@@ -659,11 +660,13 @@
                 plate_numbers = result.plate_numbers;
                 
 
-                Array.from(plate_numbers).forEach(plate_number => {
+                const datalist = document.getElementById("truckList");
+                datalist.innerHTML = ""; // Clear any existing options
+
+                plate_numbers.forEach(plate_number => {
                     const option = document.createElement("option");
                     option.value = plate_number;
-                    option.textContent = plate_number;
-                    inputTruck.appendChild(option);
+                    datalist.appendChild(option);
                 });
 
             } catch (error) {

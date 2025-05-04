@@ -36,9 +36,10 @@
                         </div>
                         <div class="col-12">
                             <label for="plate_number" class="form-label fw-medium">Plate Number <span class="text-danger fw-bold">*</span></label>
-                            <select class="form-select" id="plate_number" name="plate_number">
-                                <option selected value="">Select Plate Number...</option>
-                            </select>
+                            <input class="form-control" list="truckList" id="plate_number" name="plate_number" placeholder="Select plate number..." required>
+                            <datalist id="truckList" name="truckList">
+                                <!-- Options will be populated dynamically -->
+                            </datalist>
                         </div>
                         <div class="col-12">
                             <label for="truck_id" class="form-label fw-medium">Truck Id <span class="text-danger fw-bold">*</span></label>
@@ -154,9 +155,10 @@
                                 </div>
                                 <div class="col-12">
                                     <label for="plate_number{{ trip.id }}" class="form-label fw-medium">Plate Number</label>
-                                    <select class="form-select" id="plate_number{{ trip.id }}" name="plate_number">
-                                        <option selected value="">Select Plate Number...</option>
-                                    </select>
+                                    <input class="form-control" list="truckList{{ trip.id }}" id="plate_number{{ trip.id }}" name="plate_number" placeholder="Select plate number...">
+                                    <datalist id="truckList{{ trip.id }}" name="truckList">
+                                        <!-- Options will be populated dynamically -->
+                                    </datalist>
                                 </div>
                                 <div class="col-12">
                                     <label for="truck_id{{ trip.id }}" class="form-label fw-medium">Truck Id</label>
@@ -218,20 +220,16 @@
     const dateSearch = document.getElementById('dateSearch');
     const submitButton = document.getElementById('submitButton');
     const inputs = myForm.querySelectorAll('input[required]');
-    const select = myForm.querySelector('select');
-    let selectInput = Array.from(inputs).concat(select);
-
 
     submitButton.disabled = true;
 
     function disableState() {
-        let filterInput = selectInput.map(input => input.value).filter(value => value !== '');
-        console.log(filterInput);
-        submitButton.disabled = (filterInput.length !== selectInput.length);
+        let filterInput = Array.from(inputs).map(input => input.value).filter(value => value !== '');
+        submitButton.disabled = (filterInput.length !== inputs.length);
     }
 
     function disableFunction() {  
-        selectInput.forEach(input => {
+        inputs.forEach(input => {
             input.addEventListener('input', disableState);
         });
     }
@@ -244,7 +242,7 @@
 
     async function registerTrip() {
         document.getElementById('opaque').classList.remove('d-none');
-        const registrationInput = myForm.querySelectorAll('input');
+        const registrationInput = myForm.querySelectorAll('input:not([name="plate_number"])');
 
         let data = {};
         registrationInput.forEach(input => {
@@ -282,7 +280,7 @@
         document.getElementById('opaque').classList.remove('d-none');
 
         const modal = document.querySelector('.modal.fade.show');
-        const updateInput = modal.querySelectorAll('input');
+        const updateInput = modal.querySelectorAll('input:not([name="plate_number"])');
         const notice = modal.querySelector('.notice');
 
         let data = {};
@@ -381,7 +379,7 @@
     });
 
     async function getTruckList(modal) {
-        const truck = modal.querySelector('select[name="plate_number"]');
+        const truck = modal.querySelector('input[name="plate_number"]');
         const url = "/plate-number-list";
 
         const response = await fetch(url);
@@ -393,14 +391,15 @@
             const result = await response.json();
             plate_numbers = result.plate_numbers;
             
-            truck.innerHTML = '<option selected value="">Select Plate Number...</option>';
+            const datalist = modal.querySelector('datalist[name="truckList"]');
+            datalist.innerHTML = ""; // Clear any existing options
 
-            Array.from(plate_numbers).forEach(plate_number => {
+            plate_numbers.forEach(plate_number => {
                 const option = document.createElement("option");
                 option.value = plate_number;
-                option.textContent = plate_number;
-                truck.appendChild(option);
+                datalist.appendChild(option);
             });
+
             disableState();
 
         } catch (error) {
@@ -411,16 +410,17 @@
     function getTruckInfo(modal) {
         const truckId = modal.querySelector('input[name="truck_id"]');
         const driverName = modal.querySelector('input[name="driver_name"]');
-        const truck = modal.querySelector('select[name="plate_number"]');
+        const truck = modal.querySelector('input[name="plate_number"]');
+        const truckList = modal.querySelector('datalist[name="truckList"]');
 
         truck.addEventListener('input', async ()=>{
             truckId.value = '';
             driverName.value = '';
-            const plate_number = truck.value;
+            const plate_number = truck.value.toLocaleLowerCase().trim();
 
-            if (plate_number === '') {
-                truckId.value = '';
-                driverName.value = '';
+            const hasPlateNumber = Array.from(truckList.children).some(option=>option.value === plate_number);
+
+            if (!hasPlateNumber) {
                 return;
             }
 
