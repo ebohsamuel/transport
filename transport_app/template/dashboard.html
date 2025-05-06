@@ -289,6 +289,9 @@
             </div>
             <div class="row justify-content-center justify-content-xl-between dashboardRow g-1 mb-3">
                 <div class="fw-bold rounded border border-2" style="height: 250px; max-width: 560px;">
+                    <canvas id="netIncomeChart" style=" font-family: sans-serif;"></canvas>
+                </div>
+                <div class="fw-bold rounded border border-2" style="height: 250px; max-width: 560px;">
                     <canvas id="tripChart" style=" font-family: sans-serif;"></canvas>
                 </div>
                 <div class="fw-bold rounded border border-2" style="height: 250px; max-width: 560px;">
@@ -397,8 +400,8 @@
         const inputYear = document.getElementById('inputYear');
         const inputTruck = document.getElementById('inputTruck');
         const searchButton = document.getElementById('searchButton');
-        let trips, expenses, monthlyTripRecord, monthlyExpensesRecord, monthlyDiselRecord, monthlyBonusRecord, monthlyDispatchRecord;
-        let expensesBarChart, tripBarChart, dieselBarChart, bonusBarChart, dispatchBarChart;
+        let trips, expenses, monthlyTripRecord, monthlyExpensesRecord, monthlyDiselRecord, monthlyBonusRecord, monthlyDispatchRecord, monthlyNetIncomeRecord;
+        let expensesBarChart, tripBarChart, dieselBarChart, bonusBarChart, dispatchBarChart, netIncomeBarChart;
 
         const yearPattern = /^\d{4}$/;  // YYYY
 
@@ -472,7 +475,10 @@
                 let month = new Date(expense.date).getMonth();
                 monthlyExpensesSum[month] = monthlyExpensesSum[month] + (expense.amount || 0);
             });
-            monthlyExpensesRecord = Object.values(monthlyExpensesSum);    
+            monthlyExpensesRecord = Object.values(monthlyExpensesSum);
+            
+            // getting the monthly net income record for the Year
+            monthlyNetIncomeRecord = monthlyTripRecord.map((_, i) => monthlyTripRecord[i] - monthlyExpensesRecord[i] - monthlyBonusRecord[i] - monthlyDiselRecord[i] - monthlyDispatchRecord[i]);
         }
 
         // chart function
@@ -496,6 +502,34 @@
             if (dispatchBarChart) {
                 dispatchBarChart.destroy();
             }
+
+            if (netIncomeBarChart) {
+                netIncomeBarChart.destroy();
+            }
+
+            netIncomeBarChart = new Chart(netIncomeChart, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: monthlyNetIncomeRecord,
+                        backgroundColor: colors
+
+                    },],
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend:{
+                            display:false
+                        },
+                        title: {
+                            display: true,
+                            text: `${truck} ${year} net income`
+                        }
+                    }
+                }
+            });
 
             expensesBarChart = new Chart(expenseChart, {
                 type: 'bar',
