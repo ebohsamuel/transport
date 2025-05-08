@@ -239,7 +239,11 @@
 
         let data = {};
         selectInput.forEach(input => {
-            data[input.name] = input.value? input.value.toLocaleLowerCase().trim() : null;
+            if (input.name !== 'password') {
+                data[input.name] = input.value? input.value.toLocaleLowerCase().trim() : null;
+            } else {
+                data[input.name] = input.value? input.value.trim() : null;
+            }
         });
         
         const url = "/user-registration";
@@ -282,7 +286,11 @@
 
         let data = {};
         selectInput.forEach(input => {
-            data[input.name] = input.value? input.value.toLocaleLowerCase().trim() : null;
+            if (input.name !== 'password') {
+                data[input.name] = input.value? input.value.toLocaleLowerCase().trim() : null;
+            } else {
+                data[input.name] = input.value? input.value.trim() : null;
+            }
         });
         
         const url = "/user-update";

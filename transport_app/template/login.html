@@ -207,6 +207,7 @@
                 if (response.redirected) {
                     window.location.href = response.url;
                 }
+                document.getElementById('opaque').classList.add('d-none');
             } catch (error) {
                 spinner.classList.add('d-none'); // Hide spinner
                 buttonText.style.display = ''; // Show text
