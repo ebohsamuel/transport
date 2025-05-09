@@ -139,7 +139,7 @@
             const bodyRows = document.querySelectorAll('tbody tr');
 
             let columns = Array.from(headRow.children).map(th => th.innerHTML.trim());
-            let data = [];
+            let data = [], date = [];
 
             let trip_amount = 0, diesel_amount = 0, dispatch_amount = 0, bonus_amount = 0;
 
@@ -151,6 +151,7 @@
                 diesel_amount += parseFloat(rowArray[8].innerHTML.trim().replace(/,/g, "")) || 0;
                 dispatch_amount += parseFloat(rowArray[5].innerHTML.trim().replace(/,/g, "")) || 0;
                 bonus_amount += parseFloat(rowArray[6].innerHTML.trim().replace(/,/g, "")) || 0;
+                date.push(rowArray[1].innerHTML.trim()) || 'n/a';
             });
 
             // Title Styling
@@ -174,6 +175,7 @@
             });
 
             const summaries = [
+                `Statement Cycle: ${date[date.length-1]} to ${date[0]}`,
                 `Trip Amount: NGN ${formatCurrency(trip_amount)}`,
                 `Diesel Amount: NGN ${formatCurrency(diesel_amount)}`,
                 `Bonus: NGN ${formatCurrency(bonus_amount)}`,

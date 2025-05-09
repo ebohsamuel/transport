@@ -117,7 +117,7 @@
             const bodyRows = document.querySelectorAll('tbody tr');
 
             let columns = Array.from(headRow.children).map(th => th.innerHTML.trim());
-            let data = [];
+            let data = [], date = [];
 
             let expense_amount = 0;
 
@@ -126,6 +126,7 @@
 
                 const rowArray = Array.from(row.children);
                 expense_amount += parseFloat(rowArray[5].innerHTML.trim().replace(/,/g, ""),0) || 0;
+                date.push(rowArray[1].innerHTML.trim()) || 'n/a';
             });
 
             // Title Styling
@@ -149,11 +150,12 @@
             });
 
             const summary = [
+                `Statement Cycle: ${date[date.length-1]} to ${date[0]}`,
                 `Expenses Amount: NGN ${formatCurrency(expense_amount)}`
             ];
 
-            summary.forEach(text => {
-                pdf.text(text, 30, 50);
+            summary.forEach((text,index) => {
+                pdf.text(text, 30, 50 + 10 * index);
             });
 
             // Table Data
@@ -167,7 +169,7 @@
             pdf.autoTable({
                 head: [columns],
                 body: data,
-                startY: 60,
+                startY: 70,
                 headStyles: {
                     fillColor: [40, 40, 200],
                     textColor: 255,
