@@ -36,8 +36,8 @@
                         </div>
                         <div class="col-12">
                             <label for="plate_number" class="form-label fw-medium">Plate Number <span class="text-danger fw-bold">*</span></label>
-                            <input class="form-control" list="truckList" id="plate_number" name="plate_number" placeholder="Select plate number..." required>
-                            <datalist id="truckList" name="truckList">
+                            <input class="form-control" list="truckList" id="plate_number" name="plate_number" placeholder="Select plate number..." required autocomplete="off">
+                            <datalist id="truckList" data-type="truck">
                                 <!-- Options will be populated dynamically -->
                             </datalist>
                         </div>
@@ -155,8 +155,8 @@
                                 </div>
                                 <div class="col-12">
                                     <label for="plate_number{{ trip.id }}" class="form-label fw-medium">Plate Number</label>
-                                    <input class="form-control" list="truckList{{ trip.id }}" id="plate_number{{ trip.id }}" name="plate_number" placeholder="Select plate number...">
-                                    <datalist id="truckList{{ trip.id }}" name="truckList">
+                                    <input class="form-control" list="truckList{{ trip.id }}" id="plate_number{{ trip.id }}" name="plate_number" placeholder="Select plate number..." autocomplete="off">
+                                    <datalist id="truckList{{ trip.id }}" data-type="truck">
                                         <!-- Options will be populated dynamically -->
                                     </datalist>
                                 </div>
@@ -391,7 +391,7 @@
             const result = await response.json();
             plate_numbers = result.plate_numbers;
             
-            const datalist = modal.querySelector('datalist[name="truckList"]');
+            const datalist = modal.querySelector('datalist[data-type="truck"]');
             datalist.innerHTML = ""; // Clear any existing options
 
             plate_numbers.forEach(plate_number => {
@@ -411,7 +411,7 @@
         const truckId = modal.querySelector('input[name="truck_id"]');
         const driverName = modal.querySelector('input[name="driver_name"]');
         const truck = modal.querySelector('input[name="plate_number"]');
-        const truckList = modal.querySelector('datalist[name="truckList"]');
+        const truckList = modal.querySelector('datalist[data-type="truck"]');
 
         truck.addEventListener('input', async ()=>{
             truckId.value = '';
